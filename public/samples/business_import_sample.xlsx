@@ -1,0 +1,4 @@
+category,subcategory,state,city,area,business_name,phone,website,email,street_address,description,latitude,longitude
+Restaurants,Italian,Maharashtra,Mumbai,Bandra,Pizza Palace,+91 9876543210,https://pizzapalace.com,info@pizzapalace.com,"123 Hill Road, Bandra West","Best Italian pizza in town",19.0596,72.8295
+Education,Coaching,Maharashtra,Mumbai,Andheri,Math Masters,+91 9876543211,https://mathmasters.com,contact@mathmasters.com,"456 Link Road, Andheri East","Expert math tutoring",19.1136,72.8697
+Sports,Fitness,Maharashtra,Mumbai,Powai,Flex Gym,+91 9876543212,https://flexgym.com,info@flexgym.com,"789 Central Avenue, Powai","Modern fitness equipment",19.1176,72.9060 

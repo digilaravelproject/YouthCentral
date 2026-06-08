@@ -1,0 +1,45 @@
+User-agent: *
+Allow: /
+
+# Disallow admin pages
+Disallow: /admin/
+Disallow: /admin/*
+
+# Disallow vendor dashboard and protected pages
+Disallow: /vendor/
+Disallow: /vendor/*
+
+# Disallow user dashboard and protected pages
+Disallow: /user/
+Disallow: /user/*
+
+# Disallow authentication pages
+Disallow: /signin
+Disallow: /signup
+Disallow: /login
+Disallow: /register
+Disallow: /password/
+
+# Disallow API endpoints
+Disallow: /api/
+
+# Disallow private uploads and storage
+Disallow: /storage/
+
+# Allow important public pages
+Allow: /
+Allow: /category/*
+Allow: /listings/*
+Allow: /business/*
+Allow: /events
+Allow: /events/*
+Allow: /about
+Allow: /contact
+Allow: /privacy-policy
+Allow: /terms
+Allow: /refund
+Allow: /infringement
+
+# Sitemap location (if you have one)
+# Sitemap: https://yourdomain.com/sitemap.xml
+Sitemap: https://youthcentral.co/sitemaps.xml

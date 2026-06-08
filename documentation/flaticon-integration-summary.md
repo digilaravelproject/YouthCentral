@@ -1,0 +1,21 @@
+﻿Name	Category
+<i class="fi fi-rr-book-alt"></i>	Library
+<i class="fi fi-rr-artificial-intelligence"></i>	AI
+<i class="fi fi-sr-calculator-simple"></i>	Math
+<i class="fi fi-rr-microscope"></i>	Science
+<i class="fi fi-rs-music-alt"></i>	Music
+<i class="fi fi-rr-guitar-electric"></i>	Guitar
+<i class="fi fi-rr-football-player"></i>	Football/Soccor
+<i class="fi fi-rs-cricket"></i>	Cricket
+<i class="fi fi-rs-swimmer"></i>	Swimming
+<i class="fi fi-rr-workshop"></i>	Coaching Classes
+<i class="fi fi-rs-computer"></i>	Computers/AI
+<i class="fi fi-ts-theater-masks"></i>	Theatre/Acting
+<i class="fi fi-rr-child"></i>	Day Care
+<i class="fi fi-ts-chess"></i>	Chess
+<i class="fi fi-rr-ping-pong"></i>	Table Tennis
+<i class="fi fi-tr-uniform-martial-arts"></i>	Martial Arts/Karate
+<i class="fi fi-rr-microscope"></i>	Foundational Stem
+<i class="fi fi-rr-stethoscope"></i>	Pediatrician
+<i class="fi fi-rr-meeting"></i>	Counselling
+<i class="fi fi-rr-palette"></i>	Painting/Sketching

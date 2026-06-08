@@ -1,0 +1,207 @@
+
+=======================================================
+composer dump-autoload
+=======================================================
+CREATE TABLE `students` (
+    `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `phone` VARCHAR(255) NOT NULL UNIQUE,
+    `name` VARCHAR(255) NULL,
+    `otp_code` VARCHAR(255) NULL,
+    `otp_expires_at` TIMESTAMP NULL,
+    `event_registration_id` BIGINT UNSIGNED NULL,
+    `student_class` VARCHAR(255) NULL,
+    `created_at` TIMESTAMP NULL DEFAULT NULL,
+    `updated_at` TIMESTAMP NULL DEFAULT NULL,
+
+    CONSTRAINT `students_event_registration_id_foreign`
+    FOREIGN KEY (`event_registration_id`)
+    REFERENCES `event_registrations`(`id`)
+    ON DELETE SET NULL
+);
+
+CREATE TABLE `study_materials` (
+    `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `title` VARCHAR(255) NOT NULL,
+    `type` ENUM('PDF', 'Worksheet', 'STEM') NOT NULL,
+    `file_path` VARCHAR(255) NULL,
+    `video_link` VARCHAR(255) NULL,
+    `status` TINYINT(1) NOT NULL DEFAULT 1,
+    `created_at` TIMESTAMP NULL DEFAULT NULL,
+    `updated_at` TIMESTAMP NULL DEFAULT NULL
+);
+
+CREATE TABLE `study_material_assignments` (
+    `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    
+    `study_material_id` BIGINT UNSIGNED NOT NULL,
+    `student_id` BIGINT UNSIGNED NOT NULL,
+
+    `created_at` TIMESTAMP NULL DEFAULT NULL,
+    `updated_at` TIMESTAMP NULL DEFAULT NULL,
+
+    CONSTRAINT `study_material_assignments_study_material_id_foreign`
+    FOREIGN KEY (`study_material_id`)
+    REFERENCES `study_materials`(`id`)
+    ON DELETE CASCADE,
+
+    CONSTRAINT `study_material_assignments_student_id_foreign`
+    FOREIGN KEY (`student_id`)
+    REFERENCES `students`(`id`)
+    ON DELETE CASCADE
+);
+
+ALTER TABLE `study_material_assignments`
+DROP FOREIGN KEY `study_material_assignments_student_id_foreign`;
+
+ALTER TABLE `study_material_assignments`
+CHANGE `student_id` `event_registration_id` BIGINT UNSIGNED NOT NULL;
+
+ALTER TABLE `study_material_assignments`
+ADD CONSTRAINT `sma_registration_foreign`
+FOREIGN KEY (`event_registration_id`)
+REFERENCES `event_registrations`(`id`)
+ON DELETE CASCADE;
+
+
+ALTER TABLE `study_materials`
+ADD COLUMN `subject` VARCHAR(255) NULL AFTER `title`,
+ADD COLUMN `month` DATE NULL AFTER `subject`,
+ADD COLUMN `topic` VARCHAR(255) NULL AFTER `month`;
+
+CREATE TABLE `notifications` (
+    `id` CHAR(36) NOT NULL,
+    `type` VARCHAR(255) NOT NULL,
+    
+    `notifiable_type` VARCHAR(255) NOT NULL,
+    `notifiable_id` BIGINT UNSIGNED NOT NULL,
+    
+    `data` TEXT NOT NULL,
+    `read_at` TIMESTAMP NULL DEFAULT NULL,
+    
+    `created_at` TIMESTAMP NULL DEFAULT NULL,
+    `updated_at` TIMESTAMP NULL DEFAULT NULL,
+
+    PRIMARY KEY (`id`),
+
+    INDEX `notifications_notifiable_type_notifiable_id_index`
+    (`notifiable_type`, `notifiable_id`)
+);
+
+CREATE TABLE `model_question_papers` (
+    `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `title` VARCHAR(255) NOT NULL,
+    `type` ENUM('PDF', 'Worksheet', 'STEM') NOT NULL,
+    `file_path` VARCHAR(255) NULL,
+    `video_link` VARCHAR(255) NULL,
+    `status` TINYINT(1) NOT NULL DEFAULT 1,
+    `subject` VARCHAR(255) NULL,
+    `month` DATE NULL,
+    `topic` VARCHAR(255) NULL,
+    `created_at` TIMESTAMP NULL DEFAULT NULL,
+    `updated_at` TIMESTAMP NULL DEFAULT NULL
+);
+
+CREATE TABLE `model_question_paper_assignments` (
+    `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    
+    `model_question_paper_id` BIGINT UNSIGNED NOT NULL,
+    `event_registration_id` BIGINT UNSIGNED NOT NULL,
+    
+    `completed_at` TIMESTAMP NULL DEFAULT NULL,
+    `created_at` TIMESTAMP NULL DEFAULT NULL,
+    `updated_at` TIMESTAMP NULL DEFAULT NULL,
+
+    CONSTRAINT `model_question_paper_assignments_model_question_paper_id_foreign`
+        FOREIGN KEY (`model_question_paper_id`)
+        REFERENCES `model_question_papers`(`id`)
+        ON DELETE CASCADE,
+
+    CONSTRAINT `model_question_paper_assignments_event_registration_id_foreign`
+        FOREIGN KEY (`event_registration_id`)
+        REFERENCES `event_registrations`(`id`)
+        ON DELETE CASCADE
+);
+
+CREATE TABLE `progress_activities` (
+    `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `activity_type` VARCHAR(255) NOT NULL UNIQUE,
+    `title` VARCHAR(255) NOT NULL,
+    `percentage` INT NOT NULL,
+    `max_limit` INT NOT NULL,
+    `created_at` TIMESTAMP NULL DEFAULT NULL,
+    `updated_at` TIMESTAMP NULL DEFAULT NULL
+);
+
+INSERT INTO `progress_activities`
+(`activity_type`, `title`, `percentage`, `max_limit`, `created_at`, `updated_at`)
+VALUES
+(
+    'study_material_view',
+    'Study materials viewed',
+    30,
+    10,
+    NOW(),
+    NOW()
+),
+(
+    'study_material_download',
+    'Study materials download',
+    15,
+    5,
+    NOW(),
+    NOW()
+),
+(
+    'model_question_paper_download',
+    'Model question papers downloads',
+    15,
+    5,
+    NOW(),
+    NOW()
+),
+(
+    'model_question_paper_view',
+    'Model question papers viewed',
+    20,
+    5,
+    NOW(),
+    NOW()
+),
+(
+    'paper_completed',
+    'Papers completed',
+    10,
+    5,
+    NOW(),
+    NOW()
+),
+(
+    'login_streak',
+    'Login streak',
+    20,
+    5,
+    NOW(),
+    NOW()
+);
+
+
+CREATE TABLE `student_activities` (
+    `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `student_id` BIGINT UNSIGNED NOT NULL,
+    `activity_type` VARCHAR(255) NOT NULL,
+    `reference_id` BIGINT UNSIGNED NULL,
+    `created_at` TIMESTAMP NULL DEFAULT NULL,
+    `updated_at` TIMESTAMP NULL DEFAULT NULL,
+
+    CONSTRAINT `student_activities_student_id_foreign`
+    FOREIGN KEY (`student_id`)
+    REFERENCES `students`(`id`)
+    ON DELETE CASCADE
+);
+
+CREATE INDEX `student_activities_student_id_activity_type_index`
+ON `student_activities` (`student_id`, `activity_type`);
+
+ALTER TABLE `students`
+ADD COLUMN `login_streak` INT NOT NULL DEFAULT 0 AFTER `student_class`,
+ADD COLUMN `last_login_date` DATE NULL AFTER `login_streak`;

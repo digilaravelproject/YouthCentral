@@ -1,0 +1,2 @@
+The default color skin is: Laguna Green
+RGB Code: 38,163,135

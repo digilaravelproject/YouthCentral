@@ -1,0 +1,543 @@
+/* Font Awesome 6 Override for Youth Central */
+:root {
+    /* #0A0F1F */
+    /* === Primary Brand Colors === */
+    --primary-color: #0a0f1f; /* Main deep black/blue (client's color) */
+    --primary-dark: #070a14; /* Darker shade */
+    --primary-darker: #04060c; /* Very dark - almost pure black */
+    --primary-light: #111829; /* Slightly lighter */
+    --primary-lighter: #182033; /* More visible lighter shade */
+
+    /* === Neutral Black & White === */
+    --black: #000000;
+    --white: #ffffff;
+    --off-white: #f2f2f2; /* soft white for backgrounds */
+    --light-gray: #d9d9d9; /* light grayscale */
+    --medium-gray: #9a9a9a; /* neutral text gray */
+    --dark-gray: #4d4d4d; /* dark gray */
+
+    /* === Typography === */
+    --text-color: #ffffff; /* White text on dark bg */
+    --text-muted: #9aa0af; /* soft muted tone */
+    --text-dark: #dde1e8; /* light shade for subtle text */
+
+    /* === Backgrounds === */
+    --background-color: #0a0f1f; /* Main background */
+    --background-dark: #04060c;
+    --background-light: #111829;
+
+    /* === Borders & Shadows === */
+    --border-color: #1a2337; /* subtle border derived from primary */
+    --shadow-color: rgba(10, 15, 31, 0.6); /* shadow using primary tone */
+
+    /* === Accent Colors (still monochrome & derived from main color) === */
+    --accent-color: #182033;
+    --accent-light: #24304a;
+    --accent-dark: #070b18;
+
+    /* === Feedback Colors (Black/white style, no saturated colors) === */
+    --success-color: #1e2a40; /* subtle positive indicator */
+    --warning-color: #2a354b;
+    --error-color: #151c2c; /* dark red-ish tint but within same family */
+}
+
+/* Override search categories to display Font Awesome icons properly */
+.search-categories .categories a {
+    display: inline-block;
+    text-decoration: none;
+    position: relative;
+    text-align: center;
+    vertical-align: top;
+}
+
+.search-categories .categories a i {
+    font-size: 25px;
+    padding: 6px;
+    padding-bottom: 10px;
+    display: block;
+    margin: 0 auto;
+    line-height: 1;
+}
+
+.search-categories .categories a span {
+    display: block;
+    margin-top: 0;
+    font-size: inherit;
+    line-height: inherit;
+}
+
+/* Hero search hover colors */
+.hero-header .search-categories .categories a:hover,
+.hero-header .search-categories .categories a:hover i,
+.hero-header .search-categories .categories a:hover span {
+    color: white !important;
+}
+
+/* Search popup colors - always white */
+.search-popup .search-categories .categories a,
+.search-popup .search-categories .categories a i,
+.search-popup .search-categories .categories a span {
+    color: white !important;
+}
+
+.search-popup .search-categories .categories a:hover,
+.search-popup .search-categories .categories a:hover i,
+.search-popup .search-categories .categories a:hover span {
+    color: white !important;
+}
+
+/* Remove the old :before pseudo-element content */
+.search-categories .categories a:before {
+    display: none !important;
+}
+
+/* Footer Icons Styling - Updated for FA6 */
+.footer-col i {
+    margin-right: 8px;
+    font-size: 16px;
+    color: var(--primary-color);
+    vertical-align: middle;
+}
+
+.footer-col.social-networks i.fas {
+    margin-right: 10px;
+    font-size: 18px;
+}
+
+.footer-col.footer-contact i {
+    margin-right: 10px;
+    font-size: 16px;
+}
+
+/* Trending Section Pin Icon */
+.trending .row-title h1 i {
+    margin-right: 10px;
+    color: var(--primary-color);
+    font-size: 0.9em;
+}
+
+/* Category icons in listings */
+.listing-item .category-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.listing-item .category-icon i {
+    font-size: inherit;
+}
+
+/* Business item cards category icons */
+.category-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.category-icon i {
+    font-size: inherit;
+}
+
+/* Map popup icons */
+.leaflet-div-icon i {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+/* Trending section icons */
+.trending .category-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.trending .category-icon i {
+    font-size: inherit;
+}
+
+/* Similar business icons */
+.similar-business .category-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.similar-business .category-icon i {
+    font-size: inherit;
+}
+
+/* Search results icons */
+.search-results .category-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-results .category-icon i {
+    font-size: inherit;
+}
+
+/* Ensure Font Awesome 6 icons are properly displayed */
+.fa-solid, .fas, .fa-regular, .far, .fa-brands, .fab, .fa-light, .fal {
+    font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands", "Font Awesome 6 Pro" !important;
+    -webkit-font-smoothing: antialiased;
+    display: inline-block;
+    font-style: normal;
+    font-variant: normal;
+    text-rendering: auto;
+    line-height: 1;
+}
+
+/* Solid icons (default) */
+.fa-solid, .fas {
+    font-weight: 900;
+}
+
+/* Regular icons */
+.fa-regular, .far {
+    font-weight: 400;
+}
+
+/* Brand icons */
+.fa-brands, .fab {
+    font-family: "Font Awesome 6 Brands" !important;
+    font-weight: 400;
+}
+
+/* Light icons (Pro only) */
+.fa-light, .fal {
+    font-family: "Font Awesome 6 Pro" !important;
+    font-weight: 300;
+}
+
+/* Override any conflicting icon font styles */
+[class^="icon-"], [class*=" icon-"] {
+    font-family: inherit !important;
+}
+
+/* Ensure proper icon display in various contexts */
+.category-icon.fas,
+.category-icon.far,
+.category-icon.fab,
+.category-icon.fal,
+.category-icon.fa-solid,
+.category-icon.fa-regular,
+.category-icon.fa-brands,
+.category-icon.fa-light {
+    font-size: 20px;
+}
+
+/* Admin table icons */
+.admin-icon-display {
+    font-size: 18px;
+    color: #5e72e4;
+    margin-right: 8px;
+}
+
+/* Icon picker preview */
+.selected-icon-display i {
+    color: #5e72e4 !important;
+}
+
+.icon-option i {
+    color: #5e72e4 !important;
+}
+
+.icon-option.selected i {
+    color: white !important;
+}
+
+/* Responsive icon sizes */
+@media (max-width: 768px) {
+    .search-categories .categories a i {
+        font-size: 20px;
+    }
+
+    .category-icon.fas,
+    .category-icon.far,
+    .category-icon.fab,
+    .category-icon.fal,
+    .category-icon.fa-solid,
+    .category-icon.fa-regular,
+    .category-icon.fa-brands,
+    .category-icon.fa-light {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .search-categories .categories a i {
+        font-size: 18px;
+    }
+
+    .category-icon.fas,
+    .category-icon.far,
+    .category-icon.fab,
+    .category-icon.fal,
+    .category-icon.fa-solid,
+    .category-icon.fa-regular,
+    .category-icon.fa-brands,
+    .category-icon.fa-light {
+        font-size: 14px;
+    }
+}
+
+/* Fix footer icon alignment and visibility */
+footer {
+    display: block !important;
+    visibility: visible !important;
+}
+
+.footer-info {
+    display: table !important;
+    width: 100% !important;
+    table-layout: fixed !important;
+}
+
+.footer-col {
+    display: table-cell !important;
+    vertical-align: middle !important;
+    text-align: center !important;
+    padding: 20px 10px !important;
+}
+
+.footer-col i {
+    display: inline-block !important;
+    margin-right: 8px !important;
+    color: var(--primary-color) !important;
+    font-size: 16px !important;
+    vertical-align: middle !important;
+}
+
+.social-networks a {
+    display: inline-block !important;
+    margin: 0 5px !important;
+    color: var(--primary-color) !important;
+    font-size: 18px !important;
+    text-decoration: none !important;
+}
+
+.social-networks a i {
+    color: var(--primary-color) !important;
+    font-size: 18px !important;
+}
+
+.social-networks a:hover i {
+    color: var(--primary-darker) !important;
+}
+
+.footer-logo {
+    text-align: center !important;
+    padding: 20px 0 !important;
+}
+
+.footer-credits {
+    text-align: center !important;
+    padding: 15px 0 !important;
+}
+
+/* Override main CSS file height issues */
+.social-networks {
+    height: auto !important;
+    min-height: auto !important;
+    position: relative !important;
+    text-align: center !important;
+}
+
+/* Mobile responsive - Override main style.css with stronger specificity */
+@media (max-width: 768px) {
+    body .footer-info {
+        display: block !important;
+    }
+
+    body .footer-col {
+        display: block !important;
+        width: 100% !important;
+        padding: 8px 10px !important;
+        margin-bottom: 5px !important;
+        height: auto !important;
+    }
+
+    /* Override the specific nth-child(odd) rule from main CSS */
+    body .footer-col:nth-child(odd) {
+        background: rgba(10, 15, 31, 0.97) !important;
+        padding: 23px !important;
+        height: 100px !important; /* Override the 100px height */
+        margin: 0px !important;
+    }
+
+    body .footer-col:last-child {
+        margin-bottom: 0 !important;
+    }
+
+    body .footer-contact {
+        display: none !important;
+    }
+
+    /* Reduce footer logo padding on mobile */
+    body .footer-logo {
+        padding: 10px 0 !important;
+        height: auto !important;
+    }
+
+    /* Reduce footer credits padding on mobile */
+    body .footer-credits {
+        padding: 8px 0 !important;
+        height: auto !important;
+    }
+
+    /* Compact social media icons on mobile */
+    body .social-networks {
+        height: auto !important;
+        min-height: auto !important;
+        padding: 0 !important;
+    }
+
+    body .social-networks a {
+        margin: 0 3px !important;
+        font-size: 16px !important;
+    }
+
+    /* Reduce icon margins on mobile */
+    body .footer-col i {
+        margin-right: 6px !important;
+        font-size: 14px !important;
+    }
+}
+
+/* Extra small mobile devices */
+@media (max-width: 480px) {
+    body .footer-col {
+        /* padding: 6px 8px !important;
+        margin-bottom: 3px !important;
+        height: auto !important; */
+        padding: 40px !important;
+        height: 110px !important;
+        margin: 0px !important;
+    }
+
+    body .footer-logo {
+        padding: 8px 0 !important;
+        height: auto !important;
+    }
+
+    body .footer-credits {
+        padding: 6px 0 !important;
+        font-size: 12px !important;
+        height: auto !important;
+    }
+
+    body .social-networks {
+        height: auto !important;
+        min-height: auto !important;
+        padding: 0 !important;
+    }
+
+    body .social-networks a {
+        margin: 0 2px !important;
+        font-size: 14px !important;
+    }
+
+    body .footer-col i {
+        margin-right: 4px !important;
+        font-size: 18px !important;
+    }
+}
+
+/* Specific Social Media Icon Fixes */
+.social-networks a i.fa-brands {
+    font-family: "Font Awesome 6 Brands" !important;
+    font-weight: 400 !important;
+    display: inline-block !important;
+    font-style: normal !important;
+    font-variant: normal !important;
+    text-rendering: auto !important;
+    line-height: 1 !important;
+    -webkit-font-smoothing: antialiased !important;
+}
+
+/* Brand icon content fixes */
+.fa-instagram::before {
+    content: "\f16d" !important;
+}
+
+.fa-x-twitter::before {
+    content: "\e61b" !important;
+}
+
+.fa-linkedin::before {
+    content: "\f08c" !important;
+}
+
+/* Prevent double icons */
+.social-networks a::before {
+    content: none !important;
+    display: none !important;
+}
+
+/* Ensure proper positioning */
+.social-networks a {
+    position: relative !important;
+}
+
+/* Force brand font for footer social icons */
+.footer-col.social-networks .fa-brands {
+    font-family: "Font Awesome 6 Brands" !important;
+    font-weight: 400 !important;
+}
+
+/* Modal title styling */
+.modal-title {
+    color: #fff !important;
+}
+
+/* Auto detect text styling */
+#autoDetectText {
+    color: #fff !important;
+}
+
+/* Font Awesome 6 overrides */
+.fa-solid, .fas,
+.fa-regular, .far,
+.fa-light, .fal,
+.fa-thin, .fat,
+.fa-duotone, .fad,
+.fa-brands, .fab {
+    font-family: "Font Awesome 6 Free" !important;
+}
+
+/* Flaticon styles */
+.fi {
+    font-size: 1.25em;
+    line-height: 1;
+    vertical-align: middle;
+}
+
+/* Fix for search categories */
+.search-categories .categories a i.fi {
+    font-size: 24px;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.search-categories .categories a.child i.fi {
+    font-size: 24px;
+    display: block;
+    margin-bottom: 10px;
+    color: #fff;
+}
+
+.cat-icon i.fi {
+    font-size: 32px;
+}
+
+/* Fix for hero search categories */
+.hero-header .search-categories .categories a i.fi {
+    font-size: 24px;
+    display: block;
+    margin-bottom: 10px;
+    color: #fff;
+}
