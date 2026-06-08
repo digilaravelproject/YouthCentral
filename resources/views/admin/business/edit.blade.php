@@ -135,7 +135,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="state_id" class="form-control-label">State</label>
-                                    <select class="form-control" id="state_id">
+                                    <select class="form-control" id="state_id" name="state_id">
                                         <option value="">Select State</option>
                                         @foreach($states as $state)
                                             <option value="{{ $state->id }}" {{ $business->area->city->state_id == $state->id ? 'selected' : '' }}>
@@ -148,7 +148,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="city_id" class="form-control-label">City</label>
-                                    <select class="form-control" id="city_id">
+                                    <select class="form-control" id="city_id" name="city_id">
                                         <option value="">Select City</option>
                                         @foreach($business->area->city->state->cities as $city)
                                             <option value="{{ $city->id }}" {{ $business->area->city_id == $city->id ? 'selected' : '' }}>
@@ -479,71 +479,12 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
         
-        // State -> City dependency
-        stateDropdown.addEventListener('change', function() {
-            const stateId = this.value;
-            if (stateId) {
-                // Clear city and area dropdowns
-                cityDropdown.innerHTML = '<option value="">Loading...</option>';
-                areaDropdown.innerHTML = '<option value="">Select City First</option>';
-                
-                showLoader('city_id', 'city-loader');
-                fetch(`/admin/businesses/cities?state_id=${stateId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        // Populate cities
-                        cityDropdown.innerHTML = '<option value="">Select City</option>';
-                        data.forEach(city => {
-                            const option = document.createElement('option');
-                            option.value = city.id;
-                            option.textContent = city.name;
-                            cityDropdown.appendChild(option);
-                        });
-                    })
-                    .catch(error => {
-                        console.error('Error loading cities:', error);
-                        cityDropdown.innerHTML = '<option value="">Error loading</option>';
-                    })
-                    .finally(() => {
-                        hideLoader('city_id', 'city-loader');
-                    });
-            } else {
-                cityDropdown.innerHTML = '<option value="">Select City First</option>';
-                areaDropdown.innerHTML = '<option value="">Select City First</option>';
-            }
-        });
-        
-        // City -> Area dependency
-        cityDropdown.addEventListener('change', function() {
-            const cityId = this.value;
-            if (cityId) {
-                // Clear and set loading state
-                areaDropdown.innerHTML = '<option value="">Loading...</option>';
-                
-                showLoader('area_id', 'area-loader');
-                fetch(`/admin/businesses/areas?city_id=${cityId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        // Populate areas
-                        areaDropdown.innerHTML = '<option value="">Select Area</option>';
-                        data.forEach(area => {
-                            const option = document.createElement('option');
-                            option.value = area.id;
-                            option.textContent = area.name;
-                            areaDropdown.appendChild(option);
-                        });
-                    })
-                    .catch(error => {
-                        console.error('Error loading areas:', error);
-                        areaDropdown.innerHTML = '<option value="">Error loading</option>';
-                    })
-                    .finally(() => {
-                        hideLoader('area_id', 'area-loader');
-                    });
-            } else {
-                areaDropdown.innerHTML = '<option value="">Select City First</option>';
-            }
-        });
+        // State -> City -> Area dependency - handled by location-dropdown.js
+    });
+</script>
+<script src="{{ asset('assets/js/location-dropdown.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
 
         // --- Geocoding & Coordinate Toggling Logic ---
         function checkCoordinates() {
@@ -623,7 +564,11 @@ document.addEventListener('DOMContentLoaded', function () {
                         const txt = (sel.options[i].text||'').toLowerCase();
                         if (lower.indexOf(txt) !== -1) {
                             sel.value = sel.options[i].value;
-                            sel.dispatchEvent(new Event('change'));
+                            if (window.jQuery) {
+                                $(sel).trigger('change');
+                            } else {
+                                sel.dispatchEvent(new Event('change'));
+                            }
                             return;
                         }
                     }

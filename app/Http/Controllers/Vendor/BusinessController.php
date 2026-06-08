@@ -42,10 +42,13 @@ class BusinessController extends Controller
         }
         
         $businesses = $query->paginate(10);
-        $subcategories = Subcategory::with('category')->get();
-        $areas = Area::with('city.state')->get();
+        $subcategories = Subcategory::with('category')->orderBy('name', 'asc')->get();
+        $selectedArea = null;
+        if ($request->filled('area')) {
+            $selectedArea = Area::with('city.state')->find($request->area);
+        }
         
-        return view('vendor.business.index', compact('businesses', 'subcategories', 'areas'));
+        return view('vendor.business.index', compact('businesses', 'subcategories', 'selectedArea'));
     }
 
     /**
@@ -53,8 +56,10 @@ class BusinessController extends Controller
      */
     public function create()
     {
-        $categories = Category::with('subcategories')->get();
-        $states = State::with('cities.areas')->get();
+        $categories = Category::with(['subcategories' => function($q) {
+            $q->orderBy('name', 'asc');
+        }])->get();
+        $states = State::orderBy('name')->get();
         
         return view('vendor.business.create', compact('categories', 'states'));
     }
@@ -72,8 +77,8 @@ class BusinessController extends Controller
             'website' => 'nullable|url|max:255',
             'description' => 'nullable|string',
             'street_address' => 'required|string',
-            'latitude' => 'required|numeric',
-            'longitude' => 'required|numeric',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
             'subcategory_id' => 'required|exists:subcategories,id',
             'area_id' => 'required|exists:areas,id',
             'monday_open' => 'nullable|date_format:H:i',
@@ -232,10 +237,18 @@ class BusinessController extends Controller
                 ->with('error', 'You do not have permission to edit this business');
         }
         
-        $categories = Category::with('subcategories')->get();
-        $states = State::with('cities.areas')->get();
+        $categories = Category::with(['subcategories' => function($q) {
+            $q->orderBy('name', 'asc');
+        }])->get();
+        $states = State::orderBy('name')->get();
         
-        return view('vendor.business.edit', compact('business', 'categories', 'states'));
+        $currentStateId = $business->area->city->state_id ?? null;
+        $currentCityId = $business->area->city_id ?? null;
+        
+        $cities = $currentStateId ? City::where('state_id', $currentStateId)->orderBy('name')->get() : collect();
+        $areas = $currentCityId ? Area::where('city_id', $currentCityId)->orderBy('name')->get() : collect();
+        
+        return view('vendor.business.edit', compact('business', 'categories', 'states', 'cities', 'areas'));
     }
 
     /**
@@ -249,6 +262,16 @@ class BusinessController extends Controller
                 ->with('error', 'You do not have permission to update this business');
         }
         
+        // Handle standalone logo deletion if requested (before validation)
+        if ($request->has('delete_logo') && !$request->has('business_name')) {
+            if ($business->logo_path) {
+                Storage::disk('public')->delete($business->logo_path);
+                $business->logo_path = null;
+                $business->save();
+            }
+            return redirect()->back()->with('success', 'Logo deleted successfully');
+        }
+        
         // Validate basic business fields
         $validatedFields = [
             'business_name' => 'required|string|max:255',
@@ -256,8 +279,8 @@ class BusinessController extends Controller
             'email' => 'nullable|email|max:255',
             'website' => 'nullable|url|max:255',
             'street_address' => 'required|string',
-            'latitude' => 'required|numeric',
-            'longitude' => 'required|numeric',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
             'subcategory_id' => 'required|exists:subcategories,id',
             'area_id' => 'required|exists:areas,id',
         ];
@@ -265,6 +288,11 @@ class BusinessController extends Controller
         // Add logo validation if a logo is being uploaded
         if ($request->hasFile('logo')) {
             $validatedFields['logo'] = 'image|mimes:jpeg,png,jpg|max:1024'; // 1MB limit
+        }
+
+        // Add gallery images validation if gallery images are being uploaded
+        if ($request->hasFile('gallery_images')) {
+            $validatedFields['gallery_images.*'] = 'image|mimes:jpeg,png,jpg|max:2048'; // 2MB limit
         }
         
         $request->validate($validatedFields);
@@ -278,7 +306,10 @@ class BusinessController extends Controller
             $business->logo_path = null;
             $business->save();
             
-            return redirect()->back()->with('success', 'Logo deleted successfully');
+            // If it's a standalone action (e.g. from hidden delete form)
+            if (!$request->has('business_name')) {
+                return redirect()->back()->with('success', 'Logo deleted successfully');
+            }
         }
         
         // Handle logo upload if provided
@@ -291,16 +322,57 @@ class BusinessController extends Controller
             // Store the new logo
             $path = $request->file('logo')->store('business/' . $business->id . '/logo', 'public');
             $business->logo_path = $path;
-            $business->save();
             
-            return redirect()->back()->with('success', 'Logo uploaded successfully');
+            // If it's a standalone action (not details form)
+            if (!$request->has('business_name')) {
+                $business->save();
+                return redirect()->back()->with('success', 'Logo uploaded successfully');
+            }
+        }
+
+        // Handle gallery images upload if provided via main form
+        if ($request->hasFile('gallery_images')) {
+            $user = Auth::user();
+            $activeSubscription = $user->activeSubscription()->first();
+            $plan = $activeSubscription ? $activeSubscription->plan : null;
+            $maxImages = $plan ? $plan->max_images : 0;
+            
+            $currentImageCount = $business->images()->count();
+            $galleryImages = $request->file('gallery_images');
+            
+            foreach ($galleryImages as $image) {
+                if ($currentImageCount >= $maxImages) {
+                    session()->flash('warning', 'Some images were not uploaded because you reached the limit of your plan.');
+                    break;
+                }
+                
+                $path = $image->store('business/' . $business->id . '/gallery', 'public');
+                $business->images()->create([
+                    'path' => $path,
+                    'is_primary' => ($currentImageCount === 0)
+                ]);
+                $currentImageCount++;
+            }
         }
         
-        // If we're here, we're updating business info (not logo)
-        // Updates to pending businesses go back to pending status
+        // Updates to pending/active businesses
         $data = $request->all();
         if ($business->status === 'active') {
             $data['status'] = 'pending';
+        }
+        
+        // Convert boolean checkbox values (handle if checkbox not checked)
+        $days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+        foreach ($days as $day) {
+            $data[$day . '_closed'] = $request->has($day . '_closed');
+            // If closed, nullify open/close times
+            if ($data[$day . '_closed']) {
+                 $data[$day . '_open'] = null;
+                 $data[$day . '_close'] = null;
+            } else {
+                 $data[$day . '_open'] = $request->input($day . '_open');
+                 $data[$day . '_close'] = $request->input($day . '_close');
+            }
         }
         
         $business->update($data);
@@ -457,5 +529,36 @@ class BusinessController extends Controller
         }
         
         return redirect()->back()->with('success', 'Image deleted successfully.');
+    }
+
+    public function searchAreas(Request $request)
+    {
+        $q = $request->input('q');
+        $page = $request->input('page', 1);
+        $perPage = 50;
+        
+        $query = Area::with('city.state')->orderBy('name', 'asc');
+        
+        if (!empty($q)) {
+            $query->where('name', 'like', "%{$q}%");
+        }
+        
+        $paginator = $query->paginate($perPage, ['*'], 'page', $page);
+        
+        $results = [];
+        foreach ($paginator->items() as $area) {
+            $cityName = $area->city ? $area->city->name : '';
+            $stateName = ($area->city && $area->city->state) ? $area->city->state->name : '';
+            $fullName = $area->name . ($cityName ? " ({$cityName}, {$stateName})" : '');
+            $results[] = [
+                'id' => $area->id,
+                'text' => $fullName
+            ];
+        }
+        
+        return response()->json([
+            'results' => $results,
+            'more' => $paginator->hasMorePages()
+        ]);
     }
 }

@@ -100,7 +100,7 @@
                                                 </a>
                                             @endif --}}
 
-                                            @if($event->isApproved()) {{-- Allow delete only for approved events --}}
+                                            @if($event->isPending() || $event->isApproved()) {{-- Allow delete for pending/approved events --}}
                                                 <a href="#" class="text-danger font-weight-bold text-xs ms-2" data-bs-toggle="tooltip" title="Delete Event"
                                                    onclick="event.preventDefault(); if(confirm('Are you sure you want to delete this event?')) document.getElementById('delete-form-{{ $event->id }}').submit();">
                                                     <i class="fas fa-trash"></i>

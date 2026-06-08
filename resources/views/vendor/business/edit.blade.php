@@ -23,8 +23,18 @@
                             {{ session('error') }}
                         </div>
                     @endif
+
+                    @if($errors->any())
+                        <div class="alert alert-danger text-white">
+                            <ul class="mb-0">
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
                     
-                    <form method="POST" action="{{ route('vendor.businesses.update', $business->id) }}">
+                    <form method="POST" action="{{ route('vendor.businesses.update', $business->id) }}" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
                         
@@ -197,9 +207,8 @@
                                 <div class="form-group">
                                     <label for="city_id" class="form-control-label">City</label>
                                     <select class="form-control" id="city_id" name="city_id">
-                                        @foreach($states->first(function($s) use ($business) {
-                                            return $s->id == $business->area->city->state_id;
-                                        })->cities as $city)
+                                        <option value="">Select a city</option>
+                                        @foreach($cities as $city)
                                             <option value="{{ $city->id }}" 
                                                 {{ $business->area->city_id == $city->id ? 'selected' : '' }}>
                                                 {{ $city->name }}
@@ -213,11 +222,8 @@
                                 <div class="form-group">
                                     <label for="area_id" class="form-control-label">Area</label>
                                     <select class="form-control" id="area_id" name="area_id" required>
-                                        @foreach($states->first(function($s) use ($business) {
-                                            return $s->id == $business->area->city->state_id;
-                                        })->cities->first(function($c) use ($business) {
-                                            return $c->id == $business->area->city_id;
-                                        })->areas as $area)
+                                        <option value="">Select an area</option>
+                                        @foreach($areas as $area)
                                             <option value="{{ $area->id }}" 
                                                 {{ $business->area_id == $area->id ? 'selected' : '' }}>
                                                 {{ $area->name }}
@@ -308,61 +314,72 @@
                         
                         <hr class="horizontal dark mt-4">
                         
-                        <h6 class="text-uppercase text-sm">Business Images</h6>
+                        <h6 class="text-uppercase text-sm">Business Logo & Gallery</h6>
                         <div class="row">
+                            <!-- Logo Section -->
+                            <div class="col-md-6 mb-4">
+                                <div class="form-group">
+                                    <label class="form-control-label">Business Logo (Recommended size: 200x200px, Max: 1MB)</label>
+                                    @if($business->logo_path)
+                                        <div class="mb-3 position-relative d-inline-block d-block">
+                                            <img src="{{ asset('storage/' . $business->logo_path) }}" alt="Business Logo" class="img-thumbnail rounded" style="max-width: 150px; display: block;">
+                                            <button type="button" class="btn btn-sm btn-danger position-absolute top-0 start-0 m-1 p-2 rounded-circle" style="line-height: 1; transform: translate(-30%, -30%);" onclick="submitDeleteLogoForm()" title="Delete Logo">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    @endif
+                                    <input type="file" name="logo" id="logo" class="form-control" accept="image/jpeg,image/png,image/jpg">
+                                    <small class="text-muted d-block mt-1">Max file size: 1MB. Allowed formats: jpg, jpeg, png</small>
+                                    @error('logo')
+                                        <div class="text-danger text-xs mt-1">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                            
+                            <!-- Upload New Gallery Images Section -->
+                            <div class="col-md-6 mb-4">
+                                <div class="form-group">
+                                    <label for="gallery_images" class="form-control-label">Upload New Gallery Images</label>
+                                    <input type="file" class="form-control" name="gallery_images[]" id="gallery_images" accept="image/*" multiple>
+                                    <small class="text-muted d-block mt-1">Max file size: 2MB per image. Allowed formats: jpg, jpeg, png</small>
+                                    @error('gallery_images.*')
+                                        <div class="text-danger text-xs mt-1">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Current Gallery Images Display -->
+                        <div class="row mt-2">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label for="business_images" class="form-control-label">Manage Images</label>
-                                    
-                                    <!-- Current Images Display -->
+                                    <label class="form-control-label">Current Gallery Images</label>
                                     @if($business->images && count($business->images) > 0)
-                                        <div class="row mb-3">
+                                        <div class="row">
                                             @foreach($business->images as $image)
-                                                <div class="col-md-4 col-sm-6 mb-3">
-                                                    <div class="card">
-                                                        <img src="{{ asset('storage/' . $image->path) }}" class="card-img-top" alt="Business Image" style="height: 160px; object-fit: cover;">
-                                                        <div class="card-body p-2">
-                                                            <div class="d-flex justify-content-between">
-                                                                @if(!$image->is_primary)
-                                                                <form action="{{ route('vendor.businesses.images.primary', $image->id) }}" method="POST" class="d-inline">
-                                                                    @csrf
-                                                                    @method('PATCH')
-                                                                    <button type="submit" class="btn btn-sm btn-primary">
-                                                                        <i class="fas fa-star"></i> Set Primary
-                                                                    </button>
-                                                                </form>
-                                                                @else
-                                                                <span class="badge bg-gradient-success">Primary</span>
-                                                                @endif
-                                                                
-                                                                <form action="{{ route('vendor.businesses.images.delete', $image->id) }}" method="POST" class="d-inline">
-                                                                    @csrf
-                                                                    @method('DELETE')
-                                                                    <button type="submit" class="btn btn-sm btn-danger">
-                                                                        <i class="fas fa-trash"></i>
-                                                                    </button>
-                                                                </form>
-                                                            </div>
+                                                <div class="col-md-3 col-sm-6 mb-3">
+                                                    <div class="card border border-radius-md position-relative">
+                                                        <img src="{{ asset('storage/' . $image->path) }}" class="card-img-top border-radius-md" alt="Business Image" style="height: 120px; object-fit: cover;">
+                                                        <div class="card-body p-2 d-flex justify-content-between align-items-center">
+                                                            @if(!$image->is_primary)
+                                                                <button type="button" class="btn btn-xs btn-outline-primary mb-0" onclick="submitSetPrimaryImageForm({{ $image->id }})">
+                                                                    <i class="fas fa-star"></i> Set Primary
+                                                                </button>
+                                                            @else
+                                                                <span class="badge bg-gradient-success text-xxs mb-0"><i class="fas fa-check"></i> Primary</span>
+                                                            @endif
+                                                            
+                                                            <button type="button" class="btn btn-xs btn-outline-danger mb-0" onclick="submitDeleteImageForm({{ $image->id }})">
+                                                                <i class="fas fa-trash"></i>
+                                                            </button>
                                                         </div>
                                                     </div>
                                                 </div>
                                             @endforeach
                                         </div>
                                     @else
-                                        <p class="text-muted mb-3">No images uploaded yet.</p>
+                                        <p class="text-muted text-xs">No gallery images uploaded yet.</p>
                                     @endif
-                                    
-                                    <!-- Upload New Image -->
-                                    <div class="mt-2">
-                                        <form action="{{ route('vendor.businesses.images.upload', $business->id) }}" method="POST" enctype="multipart/form-data">
-                                            @csrf
-                                            <div class="input-group">
-                                                <input type="file" class="form-control" name="image" accept="image/*" required>
-                                                <button class="btn btn-primary" type="submit">Upload Image</button>
-                                            </div>
-                                            <small class="text-muted">Max file size: 2MB. Allowed formats: jpg, jpeg, png</small>
-                                        </form>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -378,53 +395,53 @@
     </div>
 </div>
 
-<!-- Logo & Gallery Section -->
-<div class="card mt-4">
-    <div class="card-header">
-        <h4>Logo & Gallery</h4>
-    </div>
-    <div class="card-body">
-        <!-- Logo Section -->
-        <div class="form-group">
-            <label>Business Logo (Recommended size: 200x200px, Max: 1MB)</label>
-            <div class="mb-3">
-                @if($business->logo_path)
-                <div class="mb-2">
-                    <img src="{{ asset('storage/' . $business->logo_path) }}" alt="Business Logo" class="img-thumbnail" style="max-width: 200px;">
-                </div>
-                @endif
-                
-                <form action="{{ route('vendor.businesses.update', $business->id) }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    @method('PUT')
-                    <div class="input-group">
-                        <input type="file" name="logo" id="logo" class="form-control" accept="image/jpeg,image/png,image/jpg">
-                        <button type="submit" class="btn btn-primary">Upload Logo</button>
-                    </div>
-                    <small class="text-muted">Max file size: 1MB. Allowed formats: jpg, jpeg, png</small>
-                    @error('logo')
-                    <div class="text-danger">{{ $message }}</div>
-                    @enderror
-                </form>
-                
-                @if($business->logo_path)
-                <form action="{{ route('vendor.businesses.update', $business->id) }}" method="POST" class="mt-2">
-                    @csrf
-                    @method('PUT')
-                    <input type="hidden" name="delete_logo" value="1">
-                    <button type="submit" class="btn btn-danger btn-sm">
-                        <i class="fas fa-trash"></i> Delete Logo
-                    </button>
-                </form>
-                @endif
-            </div>
-        </div>
-    </div>
-</div>
+<!-- Hidden standalone action forms (to prevent nested form errors) -->
+<form id="delete-logo-form" action="{{ route('vendor.businesses.update', $business->id) }}" method="POST" style="display: none;">
+    @csrf
+    @method('PUT')
+    <input type="hidden" name="delete_logo" value="1">
+</form>
+
+<form id="set-primary-image-form" method="POST" style="display: none;">
+    @csrf
+    @method('PATCH')
+</form>
+
+<form id="delete-image-form" method="POST" style="display: none;">
+    @csrf
+    @method('DELETE')
+</form>
 @endsection
 
 @push('scripts')
-<script>    document.addEventListener('DOMContentLoaded', function() {
+<script>
+    function submitDeleteLogoForm() {
+        if (confirm('Are you sure you want to delete the business logo?')) {
+            document.getElementById('delete-logo-form').submit();
+        }
+    }
+
+    function submitSetPrimaryImageForm(imageId) {
+        const form = document.getElementById('set-primary-image-form');
+        form.action = `/vendor/businesses/images/${imageId}/primary`;
+        form.submit();
+    }
+
+    function submitDeleteImageForm(imageId) {
+        if (confirm('Are you sure you want to delete this image?')) {
+            const form = document.getElementById('delete-image-form');
+            form.action = `/vendor/businesses/images/${imageId}`;
+            form.submit();
+        }
+    }
+
+    $(document).ready(function() {
+        // Initialize Select2
+        $('#category_id, #subcategory_id, #state_id, #city_id, #area_id').select2({
+            theme: 'bootstrap-5',
+            width: '100%'
+        });
+
         // Setup visual loaders helper
         function showLoader(elementId, loaderClass) {
             const existing = document.querySelector('.' + loaderClass);
@@ -453,13 +470,12 @@
 
         // Category-Subcategory dropdown dependency
         const categorySelect = document.getElementById('category_id');
-        const subcategorySelect = document.getElementById('subcategory_id');
         
         categorySelect.addEventListener('change', function() {
             const categoryId = this.value;
             
             // Clear the subcategory dropdown
-            subcategorySelect.innerHTML = '';
+            $('#subcategory_id').empty().trigger('change');
             
             if (categoryId) {
                 showLoader('subcategory_id', 'subcategory-loader');
@@ -467,14 +483,13 @@
                     .then(response => response.json())
                     .then(data => {
                         data.forEach(subcategory => {
-                            const option = document.createElement('option');
-                            option.value = subcategory.id;
-                            option.textContent = subcategory.name;
-                            subcategorySelect.appendChild(option);
+                            const option = new Option(subcategory.name, subcategory.id, false, false);
+                            $('#subcategory_id').append(option);
                         });
                     })
                     .finally(() => {
                         hideLoader('subcategory_id', 'subcategory-loader');
+                        $('#subcategory_id').trigger('change');
                     });
             }
         });
@@ -482,14 +497,13 @@
         // State-City-Area dropdown dependencies
         const stateSelect = document.getElementById('state_id');
         const citySelect = document.getElementById('city_id');
-        const areaSelect = document.getElementById('area_id');
         
         stateSelect.addEventListener('change', function() {
             const stateId = this.value;
             
             // Clear the city and area dropdowns
-            citySelect.innerHTML = '';
-            areaSelect.innerHTML = '';
+            $('#city_id').empty().trigger('change');
+            $('#area_id').empty().trigger('change');
             
             if (stateId) {
                 showLoader('city_id', 'city-loader');
@@ -497,16 +511,15 @@
                     .then(response => response.json())
                     .then(data => {
                         data.forEach(city => {
-                            const option = document.createElement('option');
-                            option.value = city.id;
-                            option.textContent = city.name;
-                            citySelect.appendChild(option);
+                            const option = new Option(city.name, city.id, false, false);
+                            $('#city_id').append(option);
                         });
+                        
+                        $('#city_id').trigger('change');
                         
                         // Trigger city change to load areas for the first city
                         if (data.length > 0) {
-                            citySelect.value = data[0].id;
-                            citySelect.dispatchEvent(new Event('change'));
+                            $('#city_id').val(data[0].id).trigger('change');
                         }
                     })
                     .finally(() => {
@@ -519,7 +532,7 @@
             const cityId = this.value;
             
             // Clear the area dropdown
-            areaSelect.innerHTML = '';
+            $('#area_id').empty().trigger('change');
             
             if (cityId) {
                 showLoader('area_id', 'area-loader');
@@ -527,14 +540,13 @@
                     .then(response => response.json())
                     .then(data => {
                         data.forEach(area => {
-                            const option = document.createElement('option');
-                            option.value = area.id;
-                            option.textContent = area.name;
-                            areaSelect.appendChild(option);
+                            const option = new Option(area.name, area.id, false, false);
+                            $('#area_id').append(option);
                         });
                     })
                     .finally(() => {
                         hideLoader('area_id', 'area-loader');
+                        $('#area_id').trigger('change');
                     });
             }
         });

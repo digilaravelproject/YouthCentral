@@ -42,4 +42,16 @@
         </div>
     </div>
 </div>
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        if (window.jQuery && jQuery().select2) {
+            $('#state_id').select2({
+                theme: 'bootstrap-5',
+                width: '100%'
+            });
+        }
+    });
+</script>
+@endpush
 @endsection 

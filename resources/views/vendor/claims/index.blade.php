@@ -17,7 +17,7 @@
                                 <input type="text" class="form-control" name="search" placeholder="Search business name..." value="{{ request('search') }}">
                             </div>
                             <div class="col-md-3">
-                                <select name="subcategory" class="form-select">
+                                <select name="subcategory" id="filter_subcategory" class="form-control select2">
                                     <option value="">All Categories</option>
                                     @foreach(App\Models\Subcategory::with('category')->get()->sortBy('category.name') as $subcategory)
                                         <option value="{{ $subcategory->id }}" {{ request('subcategory') == $subcategory->id ? 'selected' : '' }}>
@@ -27,13 +27,13 @@
                                 </select>
                             </div>
                             <div class="col-md-3">
-                                <select name="area" class="form-select">
+                                <select name="area" id="filter_area" class="form-control select2">
                                     <option value="">All Areas</option>
-                                    @foreach(App\Models\Area::with(['city.state'])->get()->sortBy('city.state.name') as $area)
-                                        <option value="{{ $area->id }}" {{ request('area') == $area->id ? 'selected' : '' }}>
-                                            {{ $area->city->state->name }} - {{ $area->city->name }} - {{ $area->name }}
+                                    @if($selectedArea)
+                                        <option value="{{ $selectedArea->id }}" selected>
+                                            {{ $selectedArea->name }} ({{ $selectedArea->city->name }}, {{ $selectedArea->city->state->name }})
                                         </option>
-                                    @endforeach
+                                    @endif
                                 </select>
                             </div>
                             <div class="col-md-2">
@@ -103,4 +103,44 @@
         </div>
     </div>
 </div>
-@endsection 
+@endsection
+
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        $('#filter_subcategory').select2({
+            theme: 'bootstrap-5',
+            width: '100%',
+            placeholder: 'All Categories'
+        });
+        
+        $('#filter_area').select2({
+            theme: 'bootstrap-5',
+            width: '100%',
+            placeholder: 'All Areas',
+            allowClear: true,
+            ajax: {
+                url: '{{ route("vendor.businesses.areas-search") }}',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        q: params.term,
+                        page: params.page || 1
+                    };
+                },
+                processResults: function (data, params) {
+                    params.page = params.page || 1;
+                    return {
+                        results: data.results,
+                        pagination: {
+                            more: data.more
+                        }
+                    };
+                },
+                cache: true
+            }
+        });
+    });
+</script>
+@endpush 

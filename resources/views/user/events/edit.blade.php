@@ -25,7 +25,7 @@
                         </div>
                     @endif
 
-                    <form action="{{ route('user.my-events.update', $event->id) }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('user.my-events.update', $event) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
                         
@@ -49,11 +49,63 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
+                                    <label for="state_id" class="form-control-label">State</label>
+                                    <select class="form-control @error('state_id') is-invalid @enderror" id="state_id" name="state_id">
+                                        <option value="">Select State</option>
+                                        @foreach(\App\Models\State::orderBy('name')->get() as $state)
+                                            <option value="{{ $state->id }}" {{ old('state_id', $event->state_id) == $state->id ? 'selected' : '' }}>
+                                                {{ $state->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('state_id') <div class="text-danger text-xs mt-1">{{ $message }}</div> @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="city_id" class="form-control-label">City</label>
+                                    <select class="form-control @error('city_id') is-invalid @enderror" id="city_id" name="city_id" required>
+                                        <option value="">Select City</option>
+                                        @if(old('state_id', $event->state_id))
+                                            @foreach(\App\Models\City::where('state_id', old('state_id', $event->state_id))->orderBy('name')->get() as $city)
+                                                <option value="{{ $city->id }}" {{ old('city_id', $event->city_id) == $city->id ? 'selected' : '' }}>
+                                                    {{ $city->name }}
+                                                </option>
+                                            @endforeach
+                                        @endif
+                                    </select>
+                                    @error('city_id') <div class="text-danger text-xs mt-1">{{ $message }}</div> @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="area_id" class="form-control-label">Area</label>
+                                    <select class="form-control @error('area_id') is-invalid @enderror" id="area_id" name="area_id" required>
+                                        <option value="">Select Area</option>
+                                        @if(old('city_id', $event->city_id))
+                                            @foreach(\App\Models\Area::where('city_id', old('city_id', $event->city_id))->orderBy('name')->get() as $area)
+                                                <option value="{{ $area->id }}" {{ old('area_id', $event->area_id) == $area->id ? 'selected' : '' }}>
+                                                    {{ $area->name }}
+                                                </option>
+                                            @endforeach
+                                        @endif
+                                    </select>
+                                    @error('area_id') <div class="text-danger text-xs mt-1">{{ $message }}</div> @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
                                     <label for="start_date" class="form-control-label">Start Date & Time</label>
                                     <input type="datetime-local" class="form-control form-control-sm" id="start_date" 
                                            name="start_date" value="{{ old('start_date', optional($event->start_date)->format('Y-m-d\TH:i')) }}" required>
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="end_date" class="form-control-label">End Date & Time</label>
@@ -61,9 +113,6 @@
                                            name="end_date" value="{{ old('end_date', optional($event->end_date)->format('Y-m-d\TH:i')) }}" required>
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="category" class="form-control-label">Event Category</label>
@@ -71,6 +120,9 @@
                                            value="General Event" disabled>
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="seat_limit" class="form-control-label">Seat Limit</label>
@@ -78,18 +130,12 @@
                                            name="seat_limit" value="{{ old('seat_limit', $event->seat_limit) }}" min="1" placeholder="Optional">
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="registration_amount" class="form-control-label">Registration Amount</label>
                                     <input type="number" class="form-control form-control-sm" id="registration_amount" 
                                            name="registration_amount" value="{{ old('registration_amount', $event->registration_amount) }}" 
                                            min="0" step="0.01">
-                                    <!-- <small class="form-text text-muted d-block mt-2" id="registration_note" style="display: none;">
-                                        <strong>Note:</strong> Registration fees for paid events are released 24–48 hours after event completion
-                                    </small> -->
                                 </div>
                             </div>
                         </div>
@@ -163,6 +209,7 @@
 @endsection
 
 @push('scripts')
+<script src="{{ asset('assets/js/location-dropdown.js') }}"></script>
 {{-- The event-map partial handles its own scripts. We only need non-map scripts here. --}}
 <script>
     document.addEventListener('DOMContentLoaded', function() {

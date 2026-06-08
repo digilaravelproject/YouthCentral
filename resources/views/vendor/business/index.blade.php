@@ -18,7 +18,7 @@
                                     <input type="text" name="search" class="form-control" placeholder="Search by name..." value="{{ request('search') }}">
                                 </div>
                                 <div class="col-md-3">
-                                    <select name="subcategory" class="form-control">
+                                    <select name="subcategory" id="filter_subcategory" class="form-control select2">
                                         <option value="">All Subcategories</option>
                                         @foreach($subcategories as $subcategory)
                                             <option value="{{ $subcategory->id }}" {{ request('subcategory') == $subcategory->id ? 'selected' : '' }}>
@@ -28,13 +28,13 @@
                                     </select>
                                 </div>
                                 <div class="col-md-3">
-                                    <select name="area" class="form-control">
+                                    <select name="area" id="filter_area" class="form-control select2">
                                         <option value="">All Areas</option>
-                                        @foreach($areas as $area)
-                                            <option value="{{ $area->id }}" {{ request('area') == $area->id ? 'selected' : '' }}>
-                                                {{ $area->name }} ({{ $area->city->name }})
+                                        @if($selectedArea)
+                                            <option value="{{ $selectedArea->id }}" selected>
+                                                {{ $selectedArea->name }} ({{ $selectedArea->city->name }}, {{ $selectedArea->city->state->name }})
                                             </option>
-                                        @endforeach
+                                        @endif
                                     </select>
                                 </div>
                                 <div class="col-md-2">
@@ -137,9 +137,44 @@
 </div>
 @endsection
 
-@push('js')
+@push('scripts')
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    $(document).ready(function() {
+        // Initialize Select2 with Bootstrap 5 theme
+        $('#filter_subcategory').select2({
+            theme: 'bootstrap-5',
+            width: '100%',
+            placeholder: 'All Subcategories'
+        });
+        
+        $('#filter_area').select2({
+            theme: 'bootstrap-5',
+            width: '100%',
+            placeholder: 'All Areas',
+            allowClear: true,
+            ajax: {
+                url: '{{ route("vendor.businesses.areas-search") }}',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        q: params.term,
+                        page: params.page || 1
+                    };
+                },
+                processResults: function (data, params) {
+                    params.page = params.page || 1;
+                    return {
+                        results: data.results,
+                        pagination: {
+                            more: data.more
+                        }
+                    };
+                },
+                cache: true
+            }
+        });
+
         // Confirm delete
         document.querySelectorAll('.delete-form').forEach(form => {
             form.addEventListener('submit', function(e) {

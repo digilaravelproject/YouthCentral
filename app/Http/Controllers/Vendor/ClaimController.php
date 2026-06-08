@@ -47,7 +47,12 @@ class ClaimController extends Controller
         
         $businesses = $query->paginate(10);
         
-        return view('vendor.claims.index', compact('businesses'));
+        $selectedArea = null;
+        if ($request->filled('area')) {
+            $selectedArea = \App\Models\Area::with('city.state')->find($request->area);
+        }
+        
+        return view('vendor.claims.index', compact('businesses', 'selectedArea'));
     }
 
     /**

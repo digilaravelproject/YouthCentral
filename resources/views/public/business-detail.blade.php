@@ -1479,7 +1479,7 @@
         
         // Show the review popup
         $('body').addClass('review-popup-open');
-        $('.review-popup').css({
+        $('.review-popup').addClass('showing-review').css({
           'display': 'block',
           'left': '-100%',
           'opacity': '0'
@@ -1536,6 +1536,7 @@
       });
       
       function hideReviewPopup() {
+        $('.review-popup').removeClass('showing-review');
         $('.review-popup').animate({
           'left': '-100%',
           'opacity': '0'
@@ -1591,10 +1592,10 @@
           
           // Show success notification
           $('body').prepend(`
-            <div class="alert alert-success alert-dismissible fade show" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; min-width: 300px;">
+            <div class="alert alert-success alert-dismissible" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; min-width: 300px;">
               <i class="fa-solid fa-check-circle me-2"></i>
               Review submitted successfully! It will be visible after approval.
-              <button type="button" class="btn-close" data-bs-dismiss="alert" onclick="$(this).parent().remove()"></button>
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close" onclick="$(this).parent().remove()" style="margin-left: 15px; color: inherit; opacity: 0.8;"><span aria-hidden="true">&times;</span></button>
             </div>
           `);
           
@@ -1619,10 +1620,10 @@
           }
           
           $('body').prepend(`
-            <div class="alert alert-danger alert-dismissible fade show" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; min-width: 300px;">
+            <div class="alert alert-danger alert-dismissible" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; min-width: 300px;">
               <i class="fa-solid fa-exclamation-triangle me-2"></i>
               ${errorMessage}
-              <button type="button" class="btn-close" data-bs-dismiss="alert" onclick="$(this).parent().remove()"></button>
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close" onclick="$(this).parent().remove()" style="margin-left: 15px; color: inherit; opacity: 0.8;"><span aria-hidden="true">&times;</span></button>
             </div>
           `);
           

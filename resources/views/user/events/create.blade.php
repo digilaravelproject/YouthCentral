@@ -47,21 +47,22 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="state_id" class="form-control-label">State</label>
-                                    <select class="form-select form-select-sm" id="state_id" name="state_id">
-                                        <option value="">Select State</option>
+                                    <select class="form-control @error('state_id') is-invalid @enderror" id="state_id" name="state_id">
+                                        <option value="">Select a state</option>
                                         @foreach(\App\Models\State::orderBy('name')->get() as $state)
                                             <option value="{{ $state->id }}" {{ old('state_id') == $state->id ? 'selected' : '' }}>
                                                 {{ $state->name }}
                                             </option>
                                         @endforeach
                                     </select>
+                                    @error('state_id') <div class="text-danger text-xs mt-1">{{ $message }}</div> @enderror
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="city_id" class="form-control-label">City</label>
-                                    <select class="form-select form-select-sm" id="city_id" name="city_id" {{ old('state_id') ? '' : 'disabled' }}>
-                                        <option value="">Select City</option>
+                                    <select class="form-control @error('city_id') is-invalid @enderror" id="city_id" name="city_id" required>
+                                        <option value="">Select State First</option>
                                         @if(old('state_id'))
                                             @foreach(\App\Models\City::where('state_id', old('state_id'))->orderBy('name')->get() as $city)
                                                 <option value="{{ $city->id }}" {{ old('city_id') == $city->id ? 'selected' : '' }}>
@@ -70,6 +71,7 @@
                                             @endforeach
                                         @endif
                                     </select>
+                                    @error('city_id') <div class="text-danger text-xs mt-1">{{ $message }}</div> @enderror
                                 </div>
                             </div>
                         </div>
@@ -78,8 +80,8 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="area_id" class="form-control-label">Area</label>
-                                    <select class="form-select form-select-sm" id="area_id" name="area_id" {{ old('city_id') ? '' : 'disabled' }}>
-                                        <option value="">Select Area</option>
+                                    <select class="form-control @error('area_id') is-invalid @enderror" id="area_id" name="area_id" required>
+                                        <option value="">Select City First</option>
                                         @if(old('city_id'))
                                             @foreach(\App\Models\Area::where('city_id', old('city_id'))->orderBy('name')->get() as $area)
                                                 <option value="{{ $area->id }}" {{ old('area_id') == $area->id ? 'selected' : '' }}>
@@ -88,6 +90,7 @@
                                             @endforeach
                                         @endif
                                     </select>
+                                    @error('area_id') <div class="text-danger text-xs mt-1">{{ $message }}</div> @enderror
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -176,11 +179,11 @@
     </div>
 </div>
 @endsection
-
 @push('scripts')
-{{-- The event-map partial handles its own scripts. We only need non-map scripts here. --}}
 <script src="{{ asset('assets/js/location-dropdown.js') }}"></script>
+{{-- The event-map partial handles its own scripts. We only need non-map scripts here. --}}
 <script>
+
     document.addEventListener('DOMContentLoaded', function() {
         const amountInput = document.getElementById('registration_amount');
         const registrationNote = document.getElementById('registration_note');

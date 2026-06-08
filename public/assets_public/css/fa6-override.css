@@ -504,8 +504,7 @@ footer {
 .fa-regular, .far,
 .fa-light, .fal,
 .fa-thin, .fat,
-.fa-duotone, .fad,
-.fa-brands, .fab {
+.fa-duotone, .fad {
     font-family: "Font Awesome 6 Free" !important;
 }
 

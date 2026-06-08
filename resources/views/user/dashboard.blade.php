@@ -3,7 +3,7 @@
 @section('content')
 
 <div class="container-fluid py-4">
-  <div class="row">
+  <?php /*<div class="row">
     <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
       <div class="card">
         <div class="card-body p-3">
@@ -88,7 +88,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> */?>
   
   <div class="row mt-4">
     <div class="col-lg-12 mb-lg-0 mb-4">
@@ -100,10 +100,10 @@
                 <p class="mb-1 pt-2 text-bold">Welcome, {{ Auth::user()->name }}!</p>
                 <h5 class="font-weight-bolder">Your Personal Dashboard</h5>
                 <p class="mb-5">Track your orders, manage your profile, and browse through products from our vendors.</p>
-                <a class="text-body text-sm font-weight-bold mb-0 icon-move-right mt-auto" href="#">
+                <?php /*<a class="text-body text-sm font-weight-bold mb-0 icon-move-right mt-auto" href="#">
                   Browse Products
                   <i class="fas fa-arrow-right text-sm ms-1" aria-hidden="true"></i>
-                </a>
+                </a>*/ ?>
               </div>
             </div>
             <div class="col-lg-5 ms-auto text-center mt-5 mt-lg-0">
@@ -126,19 +126,58 @@
         <div class="card-header pb-0 p-3">
           <div class="row">
             <div class="col-6 d-flex align-items-center">
-              <h6 class="mb-0">Recent Orders</h6>
-            </div>
-            <div class="col-6 text-end">
-              <a href="#" class="btn btn-outline-primary btn-sm mb-0">View All</a>
+              <h6 class="mb-0">My Activities</h6>
             </div>
           </div>
         </div>
         <div class="card-body p-3">
-          <div class="alert alert-secondary">
-            <span class="text-white">
-              <strong>Your recent orders will appear here.</strong> You haven't placed any orders yet. Start shopping to see your order history.
-            </span>
-          </div>
+          @if($activities->count() > 0)
+            <div class="table-responsive">
+              <table class="table align-items-center mb-0">
+                <thead>
+                  <tr>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 px-2">Activity</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Date</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @foreach($activities as $activity)
+                    <tr>
+                      <td class="px-2">
+                        <div class="d-flex py-1">
+                          <div class="d-flex flex-column justify-content-center">
+                            <h6 class="mb-0 text-sm">
+                              @if($activity->type === 'registration')
+                                <i class="fas fa-ticket-alt text-info me-2"></i>
+                              @else
+                                <i class="fas fa-plus-circle text-success me-2"></i>
+                              @endif
+                              {{ $activity->title }}
+                            </h6>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <p class="text-xs font-weight-bold mb-0">{{ $activity->date->format('M d, Y h:i A') }}</p>
+                      </td>
+                      <td>
+                        <span class="badge badge-sm {{ $activity->status === 'paid' || $activity->status === 'active' || $activity->status === 'approved' ? 'bg-gradient-success' : ($activity->status === 'pending' ? 'bg-gradient-warning' : 'bg-gradient-secondary') }}">
+                          {{ ucfirst($activity->status) }}
+                        </span>
+                      </td>
+                    </tr>
+                  @endforeach
+                </tbody>
+              </table>
+            </div>
+          @else
+            <div class="alert alert-secondary">
+              <span class="text-white">
+                <strong>No recent activities found.</strong> Register for events or create new ones to see your activity feed.
+              </span>
+            </div>
+          @endif
         </div>
       </div>
     </div>

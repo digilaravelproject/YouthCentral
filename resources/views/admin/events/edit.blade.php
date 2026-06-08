@@ -50,7 +50,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="state_id" class="form-control-label">State</label>
-                                    <select class="form-select form-select-sm" id="state_id" name="state_id">
+                                    <select class="form-control" id="state_id" name="state_id">
                                         <option value="">Select State</option>
                                         @foreach(\App\Models\State::orderBy('name')->get() as $state)
                                             <option value="{{ $state->id }}" {{ old('state_id', $event->state_id) == $state->id ? 'selected' : '' }}>
@@ -63,7 +63,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="city_id" class="form-control-label">City</label>
-                                    <select class="form-select form-select-sm" id="city_id" name="city_id" {{ old('state_id', $event->state_id) ? '' : 'disabled' }}>
+                                    <select class="form-control" id="city_id" name="city_id" {{ old('state_id', $event->state_id) ? '' : 'disabled' }}>
                                         <option value="">Select City</option>
                                         @if(old('state_id', $event->state_id))
                                             @foreach(\App\Models\City::where('state_id', old('state_id', $event->state_id))->orderBy('name')->get() as $city)
@@ -81,7 +81,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="area_id" class="form-control-label">Area</label>
-                                    <select class="form-select form-select-sm" id="area_id" name="area_id" {{ old('city_id', $event->city_id) ? '' : 'disabled' }}>
+                                    <select class="form-control" id="area_id" name="area_id" {{ old('city_id', $event->city_id) ? '' : 'disabled' }}>
                                         <option value="">Select Area</option>
                                         @if(old('city_id', $event->city_id))
                                             @foreach(\App\Models\Area::where('city_id', old('city_id', $event->city_id))->orderBy('name')->get() as $area)

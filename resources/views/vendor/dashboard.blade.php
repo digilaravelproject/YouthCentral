@@ -2,8 +2,8 @@
 
 @section('content')
 
-<div class="container-fluid py-4">
-  <div class="row">
+<div class="container-fluid py-2">
+  <?php /*<div class="row">
     <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
       <div class="card">
         <div class="card-body p-3">
@@ -88,9 +88,9 @@
         </div>
       </div>
     </div>
-  </div>
-  
-  <div class="row mt-4">
+  </div> */?>
+   
+  <div class="row">
     <div class="col-lg-12 mb-lg-0 mb-4">
       <div class="card">
         <div class="card-body p-3">
@@ -100,10 +100,10 @@
                 <p class="mb-1 pt-2 text-bold">Welcome, {{ Auth::user()->name }}!</p>
                 <h5 class="font-weight-bolder">Vendor Dashboard</h5>
                 <p class="mb-5">Manage your products, track orders, and analyze your business performance from this dashboard.</p>
-                <a class="text-body text-sm font-weight-bold mb-0 icon-move-right mt-auto" href="#">
+                <?php /*<a class="text-body text-sm font-weight-bold mb-0 icon-move-right mt-auto" href="#">
                   Add New Product
                   <i class="fas fa-arrow-right text-sm ms-1" aria-hidden="true"></i>
-                </a>
+                </a> */?>
               </div>
             </div>
             <div class="col-lg-5 ms-auto text-center mt-5 mt-lg-0">
@@ -126,19 +126,62 @@
         <div class="card-header pb-0 p-3">
           <div class="row">
             <div class="col-6 d-flex align-items-center">
-              <h6 class="mb-0">Recent Orders</h6>
+              <h6 class="mb-0">Recent Businesses</h6>
             </div>
             <div class="col-6 text-end">
-              <a href="#" class="btn btn-outline-primary btn-sm mb-0">View All</a>
+              <a href="{{ route('vendor.businesses.index') }}" class="btn btn-outline-primary btn-sm mb-0">View All</a>
             </div>
           </div>
         </div>
         <div class="card-body p-3">
-          <div class="alert alert-secondary">
-            <span class="text-white">
-              <strong>Your recent orders will appear here.</strong> You don't have any orders yet. Add some products to start selling.
-            </span>
-          </div>
+          @if(count($businesses) > 0)
+            <div class="table-responsive p-0">
+              <table class="table align-items-center mb-0">
+                <thead>
+                  <tr>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Business</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Subcategory</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Status</th>
+                    <th class="text-secondary opacity-7"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @foreach($businesses as $business)
+                    <tr>
+                      <td>
+                        <div class="d-flex px-2 py-1">
+                          <div class="d-flex flex-column justify-content-center">
+                            <h6 class="mb-0 text-sm">{{ $business->business_name }}</h6>
+                            <p class="text-xs text-secondary mb-0">{{ $business->phone }}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <p class="text-xs font-weight-bold mb-0">{{ $business->subcategory->name }}</p>
+                      </td>
+                      <td>
+                        <span class="badge badge-sm {{ $business->status === 'active' ? 'bg-gradient-success' : ($business->status === 'pending' ? 'bg-gradient-warning' : 'bg-gradient-secondary') }}">
+                          {{ ucfirst($business->status) }}
+                        </span>
+                      </td>
+                      <td class="align-middle text-end">
+                        <a href="{{ route('vendor.businesses.edit', $business) }}" class="text-secondary font-weight-bold text-xs me-3">
+                          Edit
+                        </a>
+                      </td>
+                    </tr>
+                  @endforeach
+                </tbody>
+              </table>
+            </div>
+          @else
+            <div class="alert alert-secondary text-white">
+              <strong>Your recent businesses will appear here.</strong> You don't have any businesses yet.
+              <div class="mt-2">
+                <a href="{{ route('vendor.businesses.create') }}" class="btn btn-sm btn-primary mb-0 text-white">Add New Business</a>
+              </div>
+            </div>
+          @endif
         </div>
       </div>
     </div>

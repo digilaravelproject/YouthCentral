@@ -111,8 +111,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Protected routes
     Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::get('/dashboard', function () {
-            return view('admin.dashboard');
-	})->name('dashboard');
+            $totalUsers = \App\Models\User::where('role', 'user')->count();
+            $totalVendors = \App\Models\User::where('role', 'vendor')->count();
+            $pendingVendors = \App\Models\User::where('role', 'vendor')->where('status', 'pending')->count();
+            $totalProducts = \App\Models\Business::count();
+            
+            return view('admin.dashboard', compact('totalUsers', 'totalVendors', 'pendingVendors', 'totalProducts'));
+        })->name('dashboard');
 
         Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
         
@@ -359,7 +364,12 @@ Route::name('vendor.')->group(function () {
         // Routes requiring subscription will go inside the next group
         Route::prefix('vendor')->middleware('vendor.subscribed')->group(function () {
             Route::get('/dashboard', function () {
-                return view('vendor.dashboard');
+                $businesses = \App\Models\Business::where('claimed_by', auth()->id())
+                    ->with(['subcategory.category'])
+                    ->latest()
+                    ->take(5)
+                    ->get();
+                return view('vendor.dashboard', compact('businesses'));
             })->name('dashboard');
             
             Route::post('/logout', [VendorAuthController::class, 'logout'])->name('logout');
@@ -368,6 +378,7 @@ Route::name('vendor.')->group(function () {
             Route::get('businesses/subcategories', [App\Http\Controllers\Vendor\BusinessController::class, 'getSubcategories'])->name('businesses.subcategories');
             Route::get('businesses/cities', [App\Http\Controllers\Vendor\BusinessController::class, 'getCities'])->name('businesses.cities');
             Route::get('businesses/areas', [App\Http\Controllers\Vendor\BusinessController::class, 'getAreas'])->name('businesses.areas');
+            Route::get('businesses/areas-search', [App\Http\Controllers\Vendor\BusinessController::class, 'searchAreas'])->name('businesses.areas-search');
             Route::resource('businesses', App\Http\Controllers\Vendor\BusinessController::class);
             
             // Business images management
@@ -436,7 +447,38 @@ Route::name('user.')->group(function () {
     // Protected routes
     Route::middleware(['auth', 'role:user'])->group(function () {
         Route::get('/dashboard', function () {
-            return view('user.dashboard');
+            $registrations = \App\Models\EventRegistration::where('user_id', Auth::id())
+                ->with('event')
+                ->latest()
+                ->take(5)
+                ->get();
+            $createdEvents = \App\Models\Event::where('created_by', Auth::id())
+                ->latest()
+                ->take(5)
+                ->get();
+            
+            $activities = collect();
+            foreach ($registrations as $reg) {
+                $activities->push((object)[
+                    'type' => 'registration',
+                    'title' => 'Registered for: ' . ($reg->event ? $reg->event->title : 'Deleted Event'),
+                    'date' => $reg->created_at,
+                    'status' => $reg->payment_status ?? 'N/A'
+                ]);
+            }
+            
+            foreach ($createdEvents as $evt) {
+                $activities->push((object)[
+                    'type' => 'creation',
+                    'title' => 'Created Event: ' . $evt->title,
+                    'date' => $evt->created_at,
+                    'status' => $evt->status ?? 'pending'
+                ]);
+            }
+            
+            $activities = $activities->sortByDesc('date')->take(5);
+
+            return view('user.dashboard', compact('activities'));
         })->name('dashboard');
         
         Route::post('/logout', [UserAuthController::class, 'logout'])->name('logout');
@@ -451,7 +493,7 @@ Route::name('user.')->group(function () {
         Route::delete('/reviews/{id}', [App\Http\Controllers\User\ReviewController::class, 'destroy'])->name('reviews.destroy');
 
         // User Event Management (General Events Only)
-        Route::resource('my-events', App\Http\Controllers\User\EventController::class)->names('my-events');
+        Route::resource('my-events', App\Http\Controllers\User\EventController::class)->parameters(['my-events' => 'event'])->names('my-events');
         Route::get('/my-events/{event}/registrations', [App\Http\Controllers\User\EventController::class, 'registrations'])
             ->name('my-events.registrations');
         Route::get('/my-events/{event}/registrations/{registration}', [App\Http\Controllers\User\EventController::class, 'showRegistration'])

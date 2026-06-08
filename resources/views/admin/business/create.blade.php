@@ -430,74 +430,10 @@
         }
     });
     
-    // State -> City -> Area dependency
-    $('#state_id').change(function() {
-        var stateId = $(this).val();
-        var cityDropdown = $('#city_id');
-        var areaDropdown = $('#area_id');
-        
-        $('.city-loader').remove();
-        cityDropdown.empty().append('<option value="">Loading...</option>');
-        areaDropdown.empty().append('<option value="">Select City First</option>');
-
-        if(stateId) {
-            $('label[for="city_id"]').append('<span class="city-loader ms-2 text-primary" style="font-size: 0.8rem;"><i class="fas fa-spinner fa-spin"></i> Loading...</span>');
-            cityDropdown.prop('disabled', true);
-
-            $.ajax({
-                url: '{{ route("admin.businesses.cities") }}',
-                type: 'GET',
-                data: { state_id: stateId },
-                success: function(data) {
-                    cityDropdown.empty();
-                    cityDropdown.append('<option value="">Select a city</option>');
-                    $.each(data, function(key, value) {
-                        cityDropdown.append('<option value="'+ value.id +'">'+ value.name +'</option>');
-                    });
-                },
-                complete: function() {
-                    $('.city-loader').remove();
-                    cityDropdown.prop('disabled', false);
-                }
-            });
-        } else {
-            cityDropdown.empty();
-            cityDropdown.append('<option value="">Select State First</option>');
-        }
-    });
-
-    $('#city_id').change(function() {
-        var cityId = $(this).val();
-        var areaDropdown = $('#area_id');
-        
-        $('.area-loader').remove();
-        areaDropdown.empty().append('<option value="">Loading...</option>');
-
-        if(cityId) {
-            $('label[for="area_id"]').append('<span class="area-loader ms-2 text-primary" style="font-size: 0.8rem;"><i class="fas fa-spinner fa-spin"></i> Loading...</span>');
-            areaDropdown.prop('disabled', true);
-
-            $.ajax({
-                url: '{{ route("admin.businesses.areas") }}',
-                type: 'GET',
-                data: { city_id: cityId },
-                success: function(data) {
-                    areaDropdown.empty();
-                    areaDropdown.append('<option value="">Select an area</option>');
-                    $.each(data, function(key, value) {
-                        areaDropdown.append('<option value="'+ value.id +'">'+ value.name +'</option>');
-                    });
-                },
-                complete: function() {
-                    $('.area-loader').remove();
-                    areaDropdown.prop('disabled', false);
-                }
-            });
-        } else {
-            areaDropdown.empty();
-            areaDropdown.append('<option value="">Select City First</option>');
-        }
-    });
+    // State -> City -> Area dependency - handled by location-dropdown.js
+</script>
+<script src="{{ asset('assets/js/location-dropdown.js') }}"></script>
+<script>
 
     // --- Geocoding & Coordinate Toggling Logic ---
     function checkCoordinates() {

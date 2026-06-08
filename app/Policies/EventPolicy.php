@@ -60,11 +60,10 @@ class EventPolicy
      */
     public function delete(User $user, Event $event)
     {
-        // Users can only delete their own general events that are APPROVED
-        // This implements the new requirement: deletion only after approval
+        // Users can delete their own general events that are pending or approved
         return $user->id === $event->created_by 
             && $event->category === 'general'
-            && $event->status === 'approved';
+            && in_array($event->status, ['pending', 'approved']);
     }
 
     /**

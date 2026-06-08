@@ -142,10 +142,10 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="street_address" class="form-control-label">Street Address</label>
-                                    <div class="input-group position-relative">
+                                    <!-- <div class="input-group position-relative"> -->
                                         <input class="form-control @error('street_address') is-invalid @enderror" type="text" id="street_address" name="street_address" value="{{ old('street_address') }}" required autocomplete="off">
                                         <div id="address-suggestions" class="list-group position-absolute" style="z-index:1050; width:100%; display:none;"></div>
-                                    </div>
+                                    <!-- </div> -->
                                     @error('street_address') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
                                 </div>
                             </div>
@@ -307,6 +307,12 @@
     }
 
     $(document).ready(function() {
+        // Initialize Select2 with Bootstrap 5 theme
+        $('#category_id, #subcategory_id, #state_id, #city_id, #area_id').select2({
+            theme: 'bootstrap-5',
+            width: '100%'
+        });
+
         // Setup CSRF token for all AJAX requests
         $.ajaxSetup({
             headers: {
@@ -324,7 +330,7 @@
             // Remove any existing loader
             $('.subcategory-loader').remove();
             
-            subcategoryDropdown.empty().append('<option value="">Loading...</option>'); // Reset with loading
+            subcategoryDropdown.empty().append('<option value="">Loading...</option>').trigger('change'); // Reset with loading
 
             if(categoryId) {
                 // Add visual loader next to Subcategory label
@@ -357,10 +363,11 @@
                     complete: function() {
                         $('.subcategory-loader').remove(); // Remove loader
                         subcategoryDropdown.prop('disabled', false); // Re-enable
+                        subcategoryDropdown.trigger('change'); // Notify Select2
                     }
                 });
             } else {
-                 subcategoryDropdown.empty().append('<option value="">Select Category First</option>');
+                 subcategoryDropdown.empty().append('<option value="">Select Category First</option>').trigger('change');
             }
         });
         
@@ -373,8 +380,8 @@
             // Remove any existing loader
             $('.city-loader').remove();
             
-            cityDropdown.empty().append('<option value="">Loading...</option>'); // Reset city with loading
-            areaDropdown.empty().append('<option value="">Select City First</option>'); // Reset area
+            cityDropdown.empty().append('<option value="">Loading...</option>').trigger('change'); // Reset city with loading
+            areaDropdown.empty().append('<option value="">Select City First</option>').trigger('change'); // Reset area
 
             if(stateId) {
                 // Add visual loader next to City label
@@ -407,11 +414,17 @@
                     complete: function() {
                         $('.city-loader').remove(); // Remove loader
                         cityDropdown.prop('disabled', false); // Re-enable
+                        cityDropdown.trigger('change'); // Notify Select2
+                        
+                        // Trigger city change to load areas for the first city
+                        if (data && data.length > 0) {
+                            cityDropdown.val(data[0].id).trigger('change');
+                        }
                     }
                 });
             } else {
-                 cityDropdown.empty().append('<option value="">Select State First</option>');
-                 areaDropdown.empty().append('<option value="">Select City First</option>');
+                 cityDropdown.empty().append('<option value="">Select State First</option>').trigger('change');
+                 areaDropdown.empty().append('<option value="">Select City First</option>').trigger('change');
             }
         });
 
@@ -423,7 +436,7 @@
             // Remove any existing loader
             $('.area-loader').remove();
             
-            areaDropdown.empty().append('<option value="">Loading...</option>'); // Reset area with loading
+            areaDropdown.empty().append('<option value="">Loading...</option>').trigger('change'); // Reset area with loading
 
             if(cityId) {
                 // Add visual loader next to Area label
@@ -456,10 +469,11 @@
                     complete: function() {
                         $('.area-loader').remove(); // Remove loader
                         areaDropdown.prop('disabled', false); // Re-enable
+                        areaDropdown.trigger('change'); // Notify Select2
                     }
                 });
             } else {
-                 areaDropdown.empty().append('<option value="">Select City First</option>');
+                 areaDropdown.empty().append('<option value="">Select City First</option>').trigger('change');
             }
         });
 
