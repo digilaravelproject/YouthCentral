@@ -147,7 +147,9 @@
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">Sign In<b class="caret"></b></a>
             <ul class="dropdown-menu">
-              <li><a href="{{ route('login') }}">Login/Register</a></li>
+              <li><a href="{{ route('login') }}">User Login/Register</a></li>
+              <li><a href="{{ route('vendor.login') }}">Vendor Login/Register</a></li>
+              <?php /*<li><a href="{{ route('student.login') }}">Student Login/Register</a></li> */?>
               <li><a href="{{ route('password.request') }}">Recover Password</a></li>
             </ul>
           </li>

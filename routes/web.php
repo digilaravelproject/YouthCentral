@@ -523,7 +523,7 @@ Route::name('user.')->group(function () {
 Route::prefix('student')->name('student.')->group(function () {
     // Guest routes
     Route::middleware('guest:student')->group(function () {
-        Route::get('/signin', [\App\Http\Controllers\Student\AuthController::class, 'showLoginForm'])->name('login');
+        // Route::get('/signin', [\App\Http\Controllers\Student\AuthController::class, 'showLoginForm'])->name('login');
         Route::post('/send-otp', [\App\Http\Controllers\Student\AuthController::class, 'sendOtp'])->name('send-otp');
         Route::get('/otp', [\App\Http\Controllers\Student\AuthController::class, 'showOtpForm'])->name('otp');
         Route::post('/verify-otp', [\App\Http\Controllers\Student\AuthController::class, 'verifyOtp'])->name('verify-otp');

@@ -358,7 +358,8 @@ function onPlayerStateChange(e) {
         $('.hero-search fieldset').append(typedAnimatedTexts);
         if ($.isFunction($.fn.typed)) {
           $(".typingEffect").typed({
-              strings: $(".typingEffect").attr("data-title").split("//"),
+              // strings: $(".typingEffect").attr("data-title").split("//"),
+              strings: ($(".typingEffect").attr("data-title") || "").split("///"),
               typeSpeed: 100,
               loop: true
           });

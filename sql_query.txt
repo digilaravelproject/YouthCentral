@@ -1,4 +1,7 @@
 
+ALTER TABLE reviews
+ADD COLUMN title VARCHAR(255) NULL AFTER comment;
+
 =======================================================
 composer dump-autoload
 =======================================================

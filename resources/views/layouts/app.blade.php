@@ -99,6 +99,10 @@
       overflow-x: auto;
       overflow-y: visible;
     }
+
+    #address-suggestions {
+      margin-top: 5% !important;
+    }
   </style>
 </head>
 
