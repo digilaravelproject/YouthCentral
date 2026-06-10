@@ -117,6 +117,40 @@
       #remember {
         margin-right: 5px;
       }
+
+      /* Custom Responsive Styles */
+      @media (max-width: 767px) {
+        .panel-form {
+          margin: 40px auto;
+          padding: 20px 15px !important; /* Decrease padding to give more horizontal room for inputs */
+          width: 95% !important; /* Expand panel width on mobile */
+          max-width: 100% !important;
+        }
+        .panel-heading a {
+          font-size: 15px !important; /* Slightly scale down tab links */
+        }
+        .panel-heading .row {
+          display: flex !important;
+          justify-content: space-between;
+          align-items: center;
+          flex-wrap: wrap; /* Ensure columns wrap if the text is too long */
+        }
+        .panel-heading .row > div {
+          width: auto !important;
+          float: none !important;
+        }
+        .panel-heading a {
+          height: auto !important;
+          line-height: normal !important;
+          display: block;
+          padding: 5px 0;
+        }
+      }
+      @media (max-width: 480px) {
+        .logo-text {
+          display: none !important; /* Hide wide logo text on small screens to prevent overlap with the header action button */
+        }
+      }
     </style>
   </head>
   <body class="bg-login">

@@ -100,9 +100,20 @@
       overflow-y: visible;
     }
 
-    #address-suggestions {
-      margin-top: 5% !important;
+    /* Force correct rendering for Font Awesome Brands */
+    i.fa-brands, 
+    i.fab {
+        font-family: "Font Awesome 6 Brands" !important;
+        font-weight: 400 !important;
+        font-style: normal;
+        font-variant: normal;
+        text-rendering: auto;
+        -webkit-font-smoothing: antialiased;
     }
+
+    /* #address-suggestions {
+      margin-top: 5% !important;
+    } */
   </style>
 </head>
 
