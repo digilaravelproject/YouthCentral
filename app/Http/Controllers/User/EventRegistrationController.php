@@ -398,7 +398,8 @@ class EventRegistrationController extends Controller
                 } elseif ($user->role == 'user') {
             
                     // Existing normal user
-                    Auth::login($user);
+                    // Double Registration
+                    // Auth::login($user);
             
                 }
             
@@ -433,14 +434,15 @@ class EventRegistrationController extends Controller
         // Duplicate / pending checks (same logic as before)
         $paidStatuses = ['paid', 'completed'];
         if (auth()->check()) {
-            $existingRegistration = EventRegistration::where('event_id', $event->id)
-                ->where('user_id', auth()->id())
-                ->whereIn('payment_status', $paidStatuses)
-                ->first();
-            if ($existingRegistration) {
-                return redirect()->route('events.show', $event)
-                    ->with('info', 'You are already registered for this event.');
-            }
+            // Double Registration
+            // $existingRegistration = EventRegistration::where('event_id', $event->id)
+            //     ->where('user_id', auth()->id())
+            //     ->whereIn('payment_status', $paidStatuses)
+            //     ->first();
+            // if ($existingRegistration) {
+            //     return redirect()->route('events.show', $event)
+            //         ->with('info', 'You are already registered for this event.');
+            // }
 
             if ($event->category === 'yc') {
                 $pendingRegistration = EventRegistration::where('event_id', $event->id)
@@ -467,14 +469,15 @@ class EventRegistrationController extends Controller
                 }
             }
         } else {
-            $existingRegistration = EventRegistration::where('event_id', $event->id)
-                ->where('email', $request->email)
-                ->whereIn('payment_status', $paidStatuses)
-                ->first();
-            if ($existingRegistration) {
-                return redirect()->route('events.show', $event)
-                    ->with('info', 'This email is already registered for this event.');
-            }
+            // Double Registration
+            // $existingRegistration = EventRegistration::where('event_id', $event->id)
+            //     ->where('email', $request->email)
+            //     ->whereIn('payment_status', $paidStatuses)
+            //     ->first();
+            // if ($existingRegistration) {
+            //     return redirect()->route('events.show', $event)
+            //         ->with('info', 'This email is already registered for this event.');
+            // }
 
             if ($event->category === 'yc') {
                 $pendingRegistration = EventRegistration::where('event_id', $event->id)
@@ -1085,6 +1088,7 @@ class EventRegistrationController extends Controller
             $isMockOrder = strpos($request->razorpay_order_id ?? '', 'order_mock_') === 0;
             $isMockPayment = strpos($request->razorpay_payment_id ?? '', 'pay_mock_') === 0;
             
+            
             if ($isMockOrder && $isMockPayment) {
                 // For mock orders, skip verification and mark as paid
                 Log::info('Processing mock payment for testing', [
@@ -1349,7 +1353,7 @@ class EventRegistrationController extends Controller
             'currency_symbol' => $currency_symbol,
             'issued_date' => now()->format('M d, Y'),
             'company_name' => config('app.name'),
-            'company_address' => "A Youthcentuary Academy Pvt. Ltd. Company" . "\n" . 
+            'company_address' => "A Youthcentuary Foundation Company" . "\n" . 
                          "Navi Mumbai, Maharashtra",
             'company_email' => 'info@youthcentral.co',
             'receipt_id' => 'RCPT-' . $registration->id . '-' . substr($registration->razorpay_payment_id, -6)

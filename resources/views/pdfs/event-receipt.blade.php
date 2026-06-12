@@ -121,7 +121,7 @@
     <div class="receipt">
         <div class="header">
             @php
-                        $logoPath = public_path('assets/img/logo/invoice-logo.png') ;
+                        $logoPath = public_path('assets/img/logo/invoice-logo.jpeg') ;
                         $logoData = base64_encode(file_get_contents($logoPath));
                         $logoSrc = 'data:image/png;base64,' . $logoData;
              @endphp
