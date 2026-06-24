@@ -92,4 +92,19 @@ class Subscription extends Model
         
         return $this;
     }
+
+    /**
+     * Update expired subscriptions for users and vendors.
+     *
+     * @return void
+     */
+    public static function updateExpiredSubscriptions()
+    {
+        self::whereHas('user', function ($query) {
+                $query->whereIn('role', ['user', 'vendor']);
+            })
+            ->where('ends_at', '<', now())
+            ->where('status', '!=', 'expired')
+            ->update(['status' => 'expired']);
+    }
 } 

@@ -3,7 +3,9 @@
       display: none !important;
       content: none !important;
   }
-
+  .navbar-vertical.navbar-expand-xs .navbar-collapse {
+      height: calc(100vh - 100px) !important;
+  }
 </style>
 <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 " id="sidenav-main">
   <div class="sidenav-header">
@@ -108,13 +110,13 @@
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link {{ Route::is('adhite text-center me-2 d-flex align-items-center justify-content-center">min.businesses.pending') ? 'active' : '' }}" href="{{ route('admin.businesses.pending') }}">
-            <div class="icon icon-shape icon-sm shadow border-radius-md bg-w
+        <a class="nav-link {{ Route::is('admin.businesses.pending') ? 'active' : '' }}" href="{{ route('admin.businesses.pending') }}">
+            <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
                 <i class="fas fa-clock text-warning"></i>
             </div>
             <span class="nav-link-text ms-1">Pending Businesses</span>
         </a>
-    </li>
+      </li>
       <li class="nav-item">
         <a class="nav-link {{ Request::is('admin/reviews*') ? 'active' : '' }}" href="{{ route('admin.reviews.index') }}">
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center"><i class="fas fa-star text-warning"></i></div>
@@ -189,7 +191,7 @@
         </a>
       </li>
 
-      <li class="nav-item mt-3">
+      <?php /*<li class="nav-item mt-3">
         <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Student Management</h6>
       </li>
 
@@ -210,7 +212,7 @@
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center"><i class="fas fa-chart-line text-success"></i></div>
             <span class="nav-link-text ms-1">Progress Tracking</span>
         </a>
-      </li>
+      </li>*/?>
 
       <li class="nav-item mt-3">
         <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Subscription Management</h6>
@@ -379,24 +381,6 @@
         </form>
       </li>
     </ul>
-  </div>
-</aside>
-
-
-
-
-        </div>
-</aside>
-
-
-
-
-        </div>
-</aside>
-
-
-
-
   </div>
 </aside>
 
