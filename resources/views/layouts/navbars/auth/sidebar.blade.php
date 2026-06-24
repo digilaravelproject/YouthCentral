@@ -3,8 +3,31 @@
       display: none !important;
       content: none !important;
   }
+  
+  /* Prevent the entire sidenav from scrolling to avoid black space and keep header static */
+  .navbar-vertical.navbar-expand-xs {
+      overflow-y: hidden !important;
+  }
+
+  /* Make only the navigation options container scrollable */
   .navbar-vertical.navbar-expand-xs .navbar-collapse {
-      height: calc(100vh - 100px) !important;
+      height: calc(100vh - 130px) !important;
+      overflow-y: auto !important;
+  }
+
+  /* Premium, thin scrollbar styling for the sidebar navigation links */
+  .navbar-vertical.navbar-expand-xs .navbar-collapse::-webkit-scrollbar {
+      width: 4px;
+  }
+  .navbar-vertical.navbar-expand-xs .navbar-collapse::-webkit-scrollbar-track {
+      background: transparent;
+  }
+  .navbar-vertical.navbar-expand-xs .navbar-collapse::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.1);
+      border-radius: 4px;
+  }
+  .navbar-vertical.navbar-expand-xs .navbar-collapse::-webkit-scrollbar-thumb:hover {
+      background: rgba(0, 0, 0, 0.25);
   }
 </style>
 <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 " id="sidenav-main">
