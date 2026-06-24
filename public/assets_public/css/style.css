@@ -5614,7 +5614,7 @@ Notice: Cross browser placeholders need to be declared separately
     position: relative;
     border-color: #ccc;
     box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
-    width: 260px;
+    /* width: 260px; */
     max-width: 100%;
     display: block;
     top: 50%;
