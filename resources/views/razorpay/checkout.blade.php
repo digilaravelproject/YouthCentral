@@ -97,7 +97,7 @@
                         <div class="text-center">
                             <!-- Replace the script tag with our own button that will trigger Razorpay -->
                             <button type="button" id="rzp-placeholder-button" class="btn btn-lg px-5 rounded-pill text-white" style="background-color: var(--primary-color);">
-                                <i class="fas fa-shield-alt me-2"></i> Pay ₹{{ number_format($plan->price, 2) }} Securely
+                                <i class="fas fa-shield-alt me-2"></i> <span style="color: white !important"> Pay ₹{{ number_format($plan->price, 2) }} Securely </span>
                             </button>
                         </div>
                         <div class="mt-3 text-center">
