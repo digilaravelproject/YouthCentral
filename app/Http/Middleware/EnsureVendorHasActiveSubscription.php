@@ -16,25 +16,7 @@ class EnsureVendorHasActiveSubscription
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $user = Auth::user();
-
-        // Check if user is authenticated, is a vendor, and does NOT have an active subscription
-        if ($user && $user->role === 'vendor') {
-            // Assuming an 'activeSubscription' method/relationship exists on the User model
-            // This method should check for a subscription that is 'active' and 'ends_at' > now()
-            $activeSubscription = null;
-            if (method_exists($user, 'activeSubscription')) {
-                $activeSubscription = $user->activeSubscription();
-            }
-            
-            if (!$activeSubscription) {
-                // If vendor doesn't have an active subscription, redirect them
-                return redirect()->route('vendor.subscription.required')
-                         ->with('warning', 'You need an active subscription to access this page. Please purchase a plan.');
-            }
-        }
-
-        // If user is not a vendor or has an active subscription, continue
+        // Allow vendor to access all functionality without active subscription.
         return $next($request);
     }
 }

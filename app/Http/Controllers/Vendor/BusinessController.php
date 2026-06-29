@@ -146,9 +146,9 @@ class BusinessController extends Controller
         if ($request->hasFile('gallery_images')) {
             // Check subscription limits
             $user = Auth::user();
-            $activeSubscription = $user->activeSubscription()->first();
+            $activeSubscription = $user->activeSubscription();
             $plan = $activeSubscription ? $activeSubscription->plan : null;
-            $maxImages = $plan ? $plan->max_images : 0;
+            $maxImages = $plan ? $plan->max_images : 10;
             
             $galleryImages = $request->file('gallery_images');
             $uploadedCount = 0;
@@ -333,9 +333,9 @@ class BusinessController extends Controller
         // Handle gallery images upload if provided via main form
         if ($request->hasFile('gallery_images')) {
             $user = Auth::user();
-            $activeSubscription = $user->activeSubscription()->first();
+            $activeSubscription = $user->activeSubscription();
             $plan = $activeSubscription ? $activeSubscription->plan : null;
-            $maxImages = $plan ? $plan->max_images : 0;
+            $maxImages = $plan ? $plan->max_images : 10;
             
             $currentImageCount = $business->images()->count();
             $galleryImages = $request->file('gallery_images');
@@ -443,9 +443,9 @@ class BusinessController extends Controller
         
         // Check if the vendor's plan allows more images
         $user = Auth::user();
-        $activeSubscription = $user->activeSubscription()->first();
+        $activeSubscription = $user->activeSubscription();
         $plan = $activeSubscription ? $activeSubscription->plan : null;
-        $maxImages = $plan ? $plan->max_images : 0;
+        $maxImages = $plan ? $plan->max_images : 10;
         
         // Count current images
         $currentImageCount = $business->images()->count();

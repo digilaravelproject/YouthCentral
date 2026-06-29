@@ -166,7 +166,7 @@ class User extends Authenticatable
         $subscription = $this->activeSubscription();
         
         if (!$subscription) {
-            return false;
+            return true;
         }
         
         $currentBusinessCount = $this->businesses()->count();
