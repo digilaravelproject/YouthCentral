@@ -151,6 +151,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::delete('/subcategories/{subcategory}', [App\Http\Controllers\Admin\SubcategoryController::class, 'destroy'])->name('subcategories.destroy');
         
         // Location Management routes
+        // States Import & Bulk Delete
+        Route::post('/states/bulk-delete', [App\Http\Controllers\Admin\StateController::class, 'bulkDestroy'])->name('states.bulk-delete');
+        Route::get('/states/sample', [App\Http\Controllers\Admin\StateController::class, 'downloadSample'])->name('states.sample');
+        Route::post('/states/import', [App\Http\Controllers\Admin\StateController::class, 'import'])->name('states.import');
         // States
         Route::get('/states', [App\Http\Controllers\Admin\StateController::class, 'index'])->name('states.index');
         Route::get('/states/create', [App\Http\Controllers\Admin\StateController::class, 'create'])->name('states.create');
@@ -159,6 +163,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::put('/states/{state}', [App\Http\Controllers\Admin\StateController::class, 'update'])->name('states.update');
         Route::delete('/states/{state}', [App\Http\Controllers\Admin\StateController::class, 'destroy'])->name('states.destroy');
         
+        // Cities Import & Bulk Delete
+        Route::post('/cities/bulk-delete', [App\Http\Controllers\Admin\CityController::class, 'bulkDestroy'])->name('cities.bulk-delete');
+        Route::get('/cities/sample', [App\Http\Controllers\Admin\CityController::class, 'downloadSample'])->name('cities.sample');
+        Route::post('/cities/import', [App\Http\Controllers\Admin\CityController::class, 'import'])->name('cities.import');
         // Cities
         Route::get('/cities', [App\Http\Controllers\Admin\CityController::class, 'index'])->name('cities.index');
         Route::get('/cities/create', [App\Http\Controllers\Admin\CityController::class, 'create'])->name('cities.create');
@@ -167,6 +175,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::put('/cities/{city}', [App\Http\Controllers\Admin\CityController::class, 'update'])->name('cities.update');
         Route::delete('/cities/{city}', [App\Http\Controllers\Admin\CityController::class, 'destroy'])->name('cities.destroy');
         
+        // Areas Import & Bulk Delete
+        Route::post('/areas/bulk-delete', [App\Http\Controllers\Admin\AreaController::class, 'bulkDestroy'])->name('areas.bulk-delete');
+        Route::get('/areas/sample', [App\Http\Controllers\Admin\AreaController::class, 'downloadSample'])->name('areas.sample');
+        Route::post('/areas/import', [App\Http\Controllers\Admin\AreaController::class, 'import'])->name('areas.import');
         // Areas
         Route::get('/areas', [App\Http\Controllers\Admin\AreaController::class, 'index'])->name('areas.index');
         Route::get('/areas/create', [App\Http\Controllers\Admin\AreaController::class, 'create'])->name('areas.create');

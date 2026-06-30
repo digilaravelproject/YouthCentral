@@ -110,4 +110,102 @@ class AreaController extends Controller
         return redirect()->route('admin.areas.index')
             ->with('success', 'Area deleted successfully');
     }
+
+    public function bulkDestroy(Request $request)
+    {
+        $idsJson = $request->input('ids', '[]');
+        $ids = json_decode($idsJson, true);
+        if (!is_array($ids)) {
+            $ids = [];
+        }
+        
+        $deletedCount = 0;
+        foreach ($ids as $id) {
+            $area = Area::find($id);
+            if ($area) {
+                $area->delete();
+                $deletedCount++;
+            }
+        }
+        
+        return redirect()->route('admin.areas.index')
+            ->with('success', "Deleted $deletedCount areas successfully.");
+    }
+
+    public function downloadSample()
+    {
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        
+        $sheet->setCellValue('A1', 'State Name');
+        $sheet->setCellValue('B1', 'City Name');
+        $sheet->setCellValue('C1', 'Area Name');
+        $sheet->setCellValue('A2', 'Maharashtra');
+        $sheet->setCellValue('B2', 'Mumbai');
+        $sheet->setCellValue('C2', 'Andheri');
+        $sheet->setCellValue('A3', 'Delhi');
+        $sheet->setCellValue('B3', 'New Delhi');
+        $sheet->setCellValue('C3', 'Connaught Place');
+        
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+        
+        $response = new \Symfony\Component\HttpFoundation\StreamedResponse(function() use ($writer) {
+            $writer->save('php://output');
+        });
+        
+        $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        $response->headers->set('Content-Disposition', 'attachment;filename="areas_sample.xlsx"');
+        $response->headers->set('Cache-Control', 'max-age=0');
+        
+        return $response;
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:xlsx,xls'
+        ]);
+
+        try {
+            $file = $request->file('file');
+            $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($file->getRealPath());
+            $sheet = $spreadsheet->getActiveSheet();
+            $rows = $sheet->toArray();
+            
+            if (count($rows) <= 1) {
+                return redirect()->back()->with('error', 'The spreadsheet is empty.');
+            }
+
+            $importedCount = 0;
+            for ($i = 1; $i < count($rows); $i++) {
+                $row = $rows[$i];
+                $stateName = isset($row[0]) ? trim($row[0]) : '';
+                $cityName = isset($row[1]) ? trim($row[1]) : '';
+                $areaName = isset($row[2]) ? trim($row[2]) : '';
+                if ($stateName === '' || $cityName === '' || $areaName === '') continue;
+
+                $state = \App\Models\State::firstOrCreate([
+                    'name' => $stateName
+                ]);
+
+                $city = City::firstOrCreate([
+                    'name' => $cityName,
+                    'state_id' => $state->id
+                ], [
+                    'slug' => \Illuminate\Support\Str::slug($cityName)
+                ]);
+
+                Area::firstOrCreate([
+                    'name' => $areaName,
+                    'city_id' => $city->id
+                ]);
+                $importedCount++;
+            }
+
+            return redirect()->route('admin.areas.index')
+                ->with('success', "$importedCount areas imported successfully.");
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error importing file: ' . $e->getMessage());
+        }
+    }
 }

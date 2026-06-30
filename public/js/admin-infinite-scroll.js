@@ -469,6 +469,9 @@ class AdminInfiniteScroll {
     
     createCityRow(city) {
         return `
+            <td class="align-middle" style="padding-left: 24px;">
+                <input type="checkbox" class="select-item" value="${city.id}">
+            </td>
             <td class="align-middle text-center">
                 <span class="text-secondary text-xs font-weight-bold">${city.id}</span>
             </td>
@@ -488,6 +491,9 @@ class AdminInfiniteScroll {
     
     createAreaRow(area) {
         return `
+            <td class="align-middle" style="padding-left: 24px;">
+                <input type="checkbox" class="select-item" value="${area.id}">
+            </td>
             <td class="align-middle text-center">
                 <span class="text-secondary text-xs font-weight-bold">${area.id}</span>
             </td>
