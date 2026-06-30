@@ -545,7 +545,15 @@ class BusinessController extends Controller
         $query = Area::with('city.state')->orderBy('name', 'asc');
         
         if (!empty($q)) {
-            $query->where('name', 'like', "%{$q}%");
+            $query->where(function($query) use ($q) {
+                $query->where('name', 'like', "%{$q}%")
+                      ->orWhereHas('city', function($query) use ($q) {
+                          $query->where('name', 'like', "%{$q}%")
+                                ->orWhereHas('state', function($query) use ($q) {
+                                    $query->where('name', 'like', "%{$q}%");
+                                });
+                      });
+            });
         }
         
         $paginator = $query->paginate($perPage, ['*'], 'page', $page);
@@ -559,6 +567,23 @@ class BusinessController extends Controller
                 'id' => $area->id,
                 'text' => $fullName
             ];
+        }
+        
+        // Sort results to prioritize those starting with the query (case-insensitive)
+        if (!empty($q)) {
+            $qLower = strtolower($q);
+            usort($results, function($a, $b) use ($qLower) {
+                $aText = strtolower($a['text']);
+                $bText = strtolower($b['text']);
+                
+                $aStarts = (strpos($aText, $qLower) === 0);
+                $bStarts = (strpos($bText, $qLower) === 0);
+                
+                if ($aStarts && !$bStarts) return -1;
+                if (!$aStarts && $bStarts) return 1;
+                
+                return strcmp($aText, $bText);
+            });
         }
         
         return response()->json([

@@ -111,7 +111,23 @@
         $('#filter_subcategory').select2({
             theme: 'bootstrap-5',
             width: '100%',
-            placeholder: 'All Categories'
+            placeholder: 'All Categories',
+            sorter: function(data) {
+                var term = $('.select2-search__field').val();
+                if (term && term.trim() !== '') {
+                    term = term.trim().toLowerCase();
+                    return data.sort(function(a, b) {
+                        var aText = (a.text || '').toLowerCase();
+                        var bText = (b.text || '').toLowerCase();
+                        var aStarts = aText.indexOf(term) === 0;
+                        var bStarts = bText.indexOf(term) === 0;
+                        if (aStarts && !bStarts) return -1;
+                        if (!aStarts && bStarts) return 1;
+                        return aText.localeCompare(bText);
+                    });
+                }
+                return data;
+            }
         });
         
         $('#filter_area').select2({

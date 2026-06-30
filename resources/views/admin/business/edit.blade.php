@@ -64,10 +64,10 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="street_address" class="form-control-label">Street Address</label>
-                                    <div class="input-group position-relative">
-                                        <input type="text" class="form-control @error('street_address') is-invalid @enderror" 
-                                               id="street_address" name="street_address" value="{{ old('street_address', $business->street_address) }}" required autocomplete="off">
-                                        <div id="address-suggestions" class="list-group position-absolute" style="z-index:1050; width:100%; display:none;"></div>
+                                    <div class="position-relative">
+                                         <input type="text" class="form-control @error('street_address') is-invalid @enderror" 
+                                                id="street_address" name="street_address" value="{{ old('street_address', $business->street_address) }}" required autocomplete="off">
+                                         <div id="address-suggestions" class="list-group position-absolute" style="z-index:1050; width:100%; display:none; top: 100%; left: 0;"></div>
                                     </div>
                                     @error('street_address')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -81,17 +81,18 @@
                                 <div class="form-group">
                                     <label for="latitude" class="form-control-label">Latitude</label>
                                     <input type="text" class="form-control @error('latitude') is-invalid @enderror" 
-                                           id="latitude" name="latitude" value="{{ old('latitude', $business->latitude) }}" required readonly>
+                                            id="latitude" name="latitude" value="{{ old('latitude', $business->latitude) }}" required>
                                     @error('latitude')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
+                            
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="longitude" class="form-control-label">Longitude</label>
                                     <input type="text" class="form-control @error('longitude') is-invalid @enderror" 
-                                           id="longitude" name="longitude" value="{{ old('longitude', $business->longitude) }}" required readonly>
+                                            id="longitude" name="longitude" value="{{ old('longitude', $business->longitude) }}" required>
                                     @error('longitude')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -488,26 +489,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // --- Geocoding & Coordinate Toggling Logic ---
         function checkCoordinates() {
-            const latField = document.getElementById('latitude');
-            const lngField = document.getElementById('longitude');
-            const lat = latField.value;
-            const lng = lngField.value;
-            
-            if (lat && lng && lat.trim() !== '' && lng.trim() !== '') {
-                latField.readOnly = false;
-                latField.style.backgroundColor = '';
-                latField.style.cursor = '';
-                lngField.readOnly = false;
-                lngField.style.backgroundColor = '';
-                lngField.style.cursor = '';
-            } else {
-                latField.readOnly = true;
-                latField.style.backgroundColor = '#e9ecef';
-                latField.style.cursor = 'not-allowed';
-                lngField.readOnly = true;
-                lngField.style.backgroundColor = '#e9ecef';
-                lngField.style.cursor = 'not-allowed';
-            }
+            // keep enabled and editable
         }
 
         // Initialize coordinates state on load

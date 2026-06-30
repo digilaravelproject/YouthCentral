@@ -1,4 +1,4 @@
-﻿@extends('layouts.app-public')
+@extends('layouts.app-public')
 
 @section('title', 'Search Results - Youth Central')
 
@@ -83,6 +83,8 @@
     position: relative; /* Ensure positioning context */
     transition: none !important; /* Disable transitions */
     animation: none !important; /* Disable animations */
+    height: auto !important;
+    padding: 10px 15px !important;
   }
   .search-header .hero-search form {
     display: flex;
@@ -92,6 +94,7 @@
   .search-header .hero-search fieldset {
     flex-grow: 1; /* Allow input field to take available space */
     margin: 0; /* Reset margin */
+    height: 50px !important;
   }
   .search-header .hero-search .form-control {
     height: 50px; /* Match button height */
@@ -122,12 +125,43 @@
     cursor: pointer;
     transition: background-color 0.2s ease;
   }
-  .search-header .hero-search .search-submit button:hover {
-    background-color: #fffffd;
+  .search-header .hero-search .search-submit {
+    position: relative;
+    display: inline-block;
+    width: auto;
+    height: auto;
+  }
+  .search-header .hero-search .search-submit button {
+    height: 50px;
+    width: 60px;
+    padding: 0;
+    border: 1px solid var(--primary-color);
+    border-left: none;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 0 30px 30px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    position: relative;
   }
   .search-header .hero-search .hero-search-icon {
-    font-size: 18px; /* Adjust icon size if needed */
-    color: #fffffd;
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    font-size: 18px !important;
+    color: #ffffff !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    text-align: center !important;
+    display: inline-block !important;
+  }
+  .search-header .hero-search .hero-search-icon:before {
+    font-size: 18px !important;
+    margin: 0 !important;
+    text-shadow: none !important;
   }
 
   .premium-badge {

@@ -142,9 +142,9 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="street_address" class="form-control-label">Street Address</label>
-                                    <div class="input-group position-relative">
+                                    <div class="position-relative">
                                         <input class="form-control" type="text" id="street_address" name="street_address" value="{{ old('street_address') }}" required autocomplete="off">
-                                        <div id="address-suggestions" class="list-group position-absolute" style="z-index:1050; width:100%; display:none;"></div>
+                                        <div id="address-suggestions" class="list-group position-absolute" style="z-index:1050; width:100%; display:none; top: 100%; left: 0;"></div>
                                     </div>
                                     @error('street_address')
                                         <div class="text-danger text-xs">{{ $message }}</div>
@@ -188,7 +188,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="latitude" class="form-control-label">Latitude</label>
-                                    <input class="form-control" type="text" id="latitude" name="latitude" value="{{ old('latitude') }}" required readonly>
+                                    <input class="form-control" type="text" id="latitude" name="latitude" value="{{ old('latitude') }}" required>
                                     @error('latitude')
                                         <div class="text-danger text-xs">{{ $message }}</div>
                                     @enderror
@@ -198,7 +198,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="longitude" class="form-control-label">Longitude</label>
-                                    <input class="form-control" type="text" id="longitude" name="longitude" value="{{ old('longitude') }}" required readonly>
+                                    <input class="form-control" type="text" id="longitude" name="longitude" value="{{ old('longitude') }}" required>
                                     @error('longitude')
                                         <div class="text-danger text-xs">{{ $message }}</div>
                                     @enderror
@@ -434,18 +434,11 @@
 </script>
 <script src="{{ asset('assets/js/location-dropdown.js') }}"></script>
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
 
     // --- Geocoding & Coordinate Toggling Logic ---
     function checkCoordinates() {
-        let lat = $('#latitude').val();
-        let lng = $('#longitude').val();
-        if (lat && lng && lat.trim() !== '' && lng.trim() !== '') {
-            $('#latitude').prop('readonly', false).css('background-color', '').css('cursor', '');
-            $('#longitude').prop('readonly', false).css('background-color', '').css('cursor', '');
-        } else {
-            $('#latitude').prop('readonly', true).css('background-color', '#e9ecef').css('cursor', 'not-allowed');
-            $('#longitude').prop('readonly', true).css('background-color', '#e9ecef').css('cursor', 'not-allowed');
-        }
+        // keep enabled and editable
     }
 
     // Initialize coordinates state on load

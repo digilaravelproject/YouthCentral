@@ -239,7 +239,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="latitude" class="form-control-label">Latitude</label>
-                                    <input class="form-control" type="text" id="latitude" name="latitude" value="{{ old('latitude', $business->latitude) }}" required readonly>
+                                    <input class="form-control" type="text" id="latitude" name="latitude" value="{{ old('latitude', $business->latitude) }}" required>
                                     @error('latitude')
                                         <div class="text-danger text-xs">{{ $message }}</div>
                                     @enderror
@@ -249,7 +249,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="longitude" class="form-control-label">Longitude</label>
-                                    <input class="form-control" type="text" id="longitude" name="longitude" value="{{ old('longitude', $business->longitude) }}" required readonly>
+                                    <input class="form-control" type="text" id="longitude" name="longitude" value="{{ old('longitude', $business->longitude) }}" required>
                                     @error('longitude')
                                         <div class="text-danger text-xs">{{ $message }}</div>
                                     @enderror
@@ -439,7 +439,23 @@
         // Initialize Select2
         $('#category_id, #subcategory_id, #state_id, #city_id, #area_id').select2({
             theme: 'bootstrap-5',
-            width: '100%'
+            width: '100%',
+            sorter: function(data) {
+                var term = $('.select2-search__field').val();
+                if (term && term.trim() !== '') {
+                    term = term.trim().toLowerCase();
+                    return data.sort(function(a, b) {
+                        var aText = (a.text || '').toLowerCase();
+                        var bText = (b.text || '').toLowerCase();
+                        var aStarts = aText.indexOf(term) === 0;
+                        var bStarts = bText.indexOf(term) === 0;
+                        if (aStarts && !bStarts) return -1;
+                        if (!aStarts && bStarts) return 1;
+                        return aText.localeCompare(bText);
+                    });
+                }
+                return data;
+            }
         });
 
         // Setup visual loaders helper
@@ -553,26 +569,7 @@
 
         // --- Geocoding & Coordinate Toggling Logic ---
         function checkCoordinates() {
-            const latField = document.getElementById('latitude');
-            const lngField = document.getElementById('longitude');
-            const lat = latField.value;
-            const lng = lngField.value;
-            
-            if (lat && lng && lat.trim() !== '' && lng.trim() !== '') {
-                latField.readOnly = false;
-                latField.style.backgroundColor = '';
-                latField.style.cursor = '';
-                lngField.readOnly = false;
-                lngField.style.backgroundColor = '';
-                lngField.style.cursor = '';
-            } else {
-                latField.readOnly = true;
-                latField.style.backgroundColor = '#e9ecef';
-                latField.style.cursor = 'not-allowed';
-                lngField.readOnly = true;
-                lngField.style.backgroundColor = '#e9ecef';
-                lngField.style.cursor = 'not-allowed';
-            }
+            // Keep enabled and editable
         }
 
         // Initialize coordinates state on load

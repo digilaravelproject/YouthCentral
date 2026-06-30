@@ -347,34 +347,30 @@ function onPlayerStateChange(e) {
     function startTypingEffect(){
       var field = '.hero-search input[type="text"]';
       if(typedAnimatedTexts==="")
-      typedAnimatedTexts = $(".typingEffect").prop("outerHTML");
-      if($(field).val()==="" && viewport().width > 480){
-        $(field).attr("placeholder","");
-        $(field).removeClass("inFocus");
-        $(".typingEffect,.typed-cursor").remove();
-        $(".typingEffect,.typed-cursor").each(function(){
-            $(this)[0].parentNode.removeChild($(this)[0]);
-        });
-        $('.hero-search fieldset').append(typedAnimatedTexts);
-        if ($.isFunction($.fn.typed)) {
-          $(".typingEffect").typed({
-              // strings: $(".typingEffect").attr("data-title").split("//"),
-              strings: ($(".typingEffect").attr("data-title") || "").split("///"),
-              typeSpeed: 100,
-              loop: true
-          });
+      typedAnimatedTexts = $(".typingEffect").first().prop("outerHTML") || "";
+      
+      $(field).each(function(){
+        var input = $(this);
+        if(input.val()==="" && viewport().width > 480){
+          input.attr("placeholder","");
+          input.removeClass("inFocus");
+          input.parent().find(".typingEffect,.typed-cursor").remove();
+          input.parent().append(typedAnimatedTexts);
+          var typingElement = input.parent().find(".typingEffect");
+          if ($.isFunction($.fn.typed) && typingElement.length) {
+            typingElement.typed({
+                strings: (typingElement.attr("data-title") || "").split("///"),
+                typeSpeed: 100,
+                loop: true
+            });
+          }
         }
-      }
-      else{
-        $(field).attr("placeholder",$(field).attr("data-placeholder"));
-      }
-      if($(field).val()!==""){
-        $(".typingEffect,.typed-cursor").remove();
-        $(".typingEffect,.typed-cursor").each(function(){
-            $(this)[0].parentNode.removeChild($(this)[0]);
-        });
-        $(field).addClass("inFocus");
-      }
+        else{
+          input.attr("placeholder", input.attr("data-placeholder"));
+          input.parent().find(".typingEffect,.typed-cursor").remove();
+          input.addClass("inFocus");
+        }
+      });
     }
 
     var landingTexts = "";
@@ -1033,14 +1029,26 @@ function onPlayerStateChange(e) {
       checkElementsVisibility();
     });
 
-    $('.hero-search input[type="text"]').on("click keyup keydown keypress oninput",function(){
-      var _ = $(this);
-      if(_.val()===""){
-        $(".typingEffect,.typed-cursor").remove();
-        $(".typingEffect,.typed-cursor").each(function(){
-            $(this)[0].parentNode.removeChild($(this)[0]);
-        });
-        $(this).addClass("inFocus");
+    $('.hero-search input[type="text"]').on("focus click", function(){
+      var input = $(this);
+      input.addClass("inFocus");
+      input.parent().find(".typingEffect, .typed-cursor").remove();
+    });
+
+    $('.hero-search input[type="text"]').on("blur", function(){
+      var input = $(this);
+      input.removeClass("inFocus");
+      if(input.val() === "") {
+        input.parent().find(".typingEffect, .typed-cursor").remove();
+        input.parent().append(typedAnimatedTexts);
+        var typingElement = input.parent().find(".typingEffect");
+        if ($.isFunction($.fn.typed) && typingElement.length) {
+          typingElement.typed({
+              strings: (typingElement.attr("data-title") || "").split("///"),
+              typeSpeed: 100,
+              loop: true
+          });
+        }
       }
     });
 
@@ -1091,20 +1099,7 @@ function onPlayerStateChange(e) {
       }
     });
 
-    $("body").on("click",function(e){
-      var field = '.hero-search input[type="text"]';
-      if(!$(e.target).is(".hero-search input[type='text']") && $(field).val()===""){
-        if($(field).hasClass("inFocus")){
-          $(field).removeClass("inFocus");
-          $(".typingEffect,.typed-cursor").remove();          
-          $(".typingEffect,.typed-cursor").each(function(){
-            $(this)[0].parentNode.removeChild($(this)[0]);
-          });
-          $('.hero-search fieldset').append(typedAnimatedTexts);
-          startTypingEffect();
-        }
-      }
-    });
+
 
     $(".hero-header .search-submit").on({
       'mouseenter': function(e){

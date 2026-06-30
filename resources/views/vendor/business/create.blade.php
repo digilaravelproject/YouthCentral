@@ -186,7 +186,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="latitude" class="form-control-label">Latitude</label>
-                                    <input class="form-control @error('latitude') is-invalid @enderror" type="text" id="latitude" name="latitude" value="{{ old('latitude') }}" required readonly>
+                                    <input class="form-control @error('latitude') is-invalid @enderror" type="text" id="latitude" name="latitude" value="{{ old('latitude') }}" required>
                                     @error('latitude') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                 </div>
                             </div>
@@ -194,7 +194,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="longitude" class="form-control-label">Longitude</label>
-                                    <input class="form-control @error('longitude') is-invalid @enderror" type="text" id="longitude" name="longitude" value="{{ old('longitude') }}" required readonly>
+                                    <input class="form-control @error('longitude') is-invalid @enderror" type="text" id="longitude" name="longitude" value="{{ old('longitude') }}" required>
                                     @error('longitude') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                 </div>
                             </div>
@@ -310,7 +310,23 @@
         // Initialize Select2 with Bootstrap 5 theme
         $('#category_id, #subcategory_id, #state_id, #city_id, #area_id').select2({
             theme: 'bootstrap-5',
-            width: '100%'
+            width: '100%',
+            sorter: function(data) {
+                var term = $('.select2-search__field').val();
+                if (term && term.trim() !== '') {
+                    term = term.trim().toLowerCase();
+                    return data.sort(function(a, b) {
+                        var aText = (a.text || '').toLowerCase();
+                        var bText = (b.text || '').toLowerCase();
+                        var aStarts = aText.indexOf(term) === 0;
+                        var bStarts = bText.indexOf(term) === 0;
+                        if (aStarts && !bStarts) return -1;
+                        if (!aStarts && bStarts) return 1;
+                        return aText.localeCompare(bText);
+                    });
+                }
+                return data;
+            }
         });
 
         // Setup CSRF token for all AJAX requests
@@ -479,15 +495,7 @@
 
         // --- Geocoding & Coordinate Toggling Logic ---
         function checkCoordinates() {
-            let lat = $('#latitude').val();
-            let lng = $('#longitude').val();
-            if (lat && lng && lat.trim() !== '' && lng.trim() !== '') {
-                $('#latitude').prop('readonly', false).css('background-color', '').css('cursor', '');
-                $('#longitude').prop('readonly', false).css('background-color', '').css('cursor', '');
-            } else {
-                $('#latitude').prop('readonly', true).css('background-color', '#e9ecef').css('cursor', 'not-allowed');
-                $('#longitude').prop('readonly', true).css('background-color', '#e9ecef').css('cursor', 'not-allowed');
-            }
+            // Keep enabled and editable
         }
 
         // Initialize coordinates state on load
