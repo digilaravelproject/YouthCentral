@@ -239,6 +239,7 @@
                           <div class="text-center">
                             <p><a href="{{ route('otp.login', ['role' => 'vendor']) }}" class="login-forgot-password">Login with OTP</a></p>
                             <p>Don't have an account? <a href="{{ route('vendor.register') }}" class="login-forgot-password">Sign up</a></p>
+                            <p><a href="{{ route('password.request') }}" class="login-forgot-password">Forgot Password?</a></p>
                             <a href="{{ route('user.login') }}">Login as Customer</a>
                           </div>
                         </div>

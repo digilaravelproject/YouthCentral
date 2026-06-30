@@ -272,6 +272,7 @@
                         <div class="col-lg-12">
                           <div class="text-center">
                             <p>Already have an account? <a href="{{ route('vendor.login') }}" class="login-forgot-password">Sign in</a></p>
+                            <p><a href="{{ route('password.request') }}" class="login-forgot-password">Forgot Password?</a></p>
                             <a href="{{ route('user.register') }}">Register as Customer</a>
                           </div>
                         </div>

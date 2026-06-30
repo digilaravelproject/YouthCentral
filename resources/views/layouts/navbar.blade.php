@@ -55,14 +55,14 @@
             </li> */?>
 
             {{-- YC IGNITE Event Link --}}
-            @php
+            <?php /*@php
               $ycIgniteEvent = \App\Models\Event::where('id', 80)->withTrashed()->first();
             @endphp
             @if($ycIgniteEvent)
               <li>
                 <a href="{{ route('events.yc_ignite', $ycIgniteEvent) }}" style="color: var(--primary-color);">YC IGNITE</a>
               </li>
-            @endif
+            @endif */?>
 
             <li class="{{ request()->is('events*') ? 'active' : '' }}" style="color: var(--primary-color);">
               <a href="{{ route('events.index') }}" style="color: var(--primary-color);">Events</a>

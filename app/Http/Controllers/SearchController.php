@@ -82,10 +82,12 @@ class SearchController extends Controller
             // Apply search term across business name, description, subcategory and category
             if (!empty($searchTerm)) {
                 // Check if search term matches any subcategory exactly (case-insensitive)
-                $subcategoryMatch = Subcategory::where('name', $searchTerm)->first();
+                $subcategoryMatch = Subcategory::where('name', 'like', '%' . $searchTerm . '%')->get();
 
                 if ($subcategoryMatch) {
-                    $query->where('businesses.subcategory_id', $subcategoryMatch->id);
+                    // If multiple subcategories match, we can use whereIn to include all matching subcategories
+                    $subIds = $subcategoryMatch->pluck('id');
+                    $query->whereIn('businesses.subcategory_id', $subIds);
                 } else {
                     // Check if it matches any category exactly (case-insensitive)
                     $categoryMatch = Category::where('name', $searchTerm)->first();

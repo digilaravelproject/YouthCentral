@@ -73,8 +73,13 @@ class BusinessController extends Controller
         $validatedData = $request->validate([
             'business_name' => 'required|string|max:255',
             'phone' => 'required|string|max:20',
+            'whatsapp_number' => 'nullable|string|max:20',
             'email' => 'nullable|email|max:255',
             'website' => 'nullable|url|max:255',
+            'facebook_link' => 'nullable|url|max:255',
+            'instagram_link' => 'nullable|url|max:255',
+            'twitter_link' => 'nullable|url|max:255',
+            'pinterest_link' => 'nullable|url|max:255',
             'description' => 'nullable|string',
             'street_address' => 'required|string',
             'latitude' => 'nullable|numeric',
